@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FoodOps AI
 
-## Getting Started
+Central de operações de delivery em que cinco agentes de IA leem a operação de um pico de jantar, descobrem por que os pedidos estão atrasando e entregam um plano de ação para o gestor.
 
-First, run the development server:
+Os dados são fictícios e gerados de forma determinística: sexta-feira, 19h às 21h, sete zonas de Fortaleza, doze restaurantes, 460 pedidos e 14 dias de histórico. Dentro deles há problemas plantados que os agentes precisam encontrar sozinhos:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- chuva em Parangaba e Messejana derrubando a oferta de entregadores;
+- uma cozinha (Brasa do Cocó) que vem piorando há duas semanas;
+- um restaurante (Sushi Kaze) que só estoura no pico de hoje;
+- um restaurante (Wok Fátima) com atraso crônico escondido por uma noite boa;
+- uma pizzaria que marca o pedido como pronto antes da hora e prende entregadores no balcão;
+- endereços difíceis de achar no Meireles.
+
+## Os agentes
+
+```
+Monitor → [ Diagnóstico ∥ Restaurantes ] → Ações → Relatório
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Agente | O que faz | Onde entra a IA |
+| --- | --- | --- |
+| Monitor | Lê os pedidos e levanta alertas | Regras detectam (rápido e auditável); o modelo prioriza e resume |
+| Diagnóstico | Explica por que os pedidos atrasaram | Cruza as etapas do atraso com zonas e restaurantes |
+| Restaurantes | Separa problema de hoje de problema crônico | Compara a noite com 14 dias de histórico e desconta a chuva |
+| Ações | Transforma diagnóstico em próximos passos | Define ação, responsável, urgência e impacto esperado |
+| Relatório | Escreve o resumo para a liderança | Consolida a saída dos outros quatro |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Diagnóstico e Restaurantes não dependem um do outro, então rodam em paralelo.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Decisões de projeto
 
-## Learn More
+- **Os agentes recebem indicadores, não pedidos crus.** Uma camada determinística (`src/lib/analysis.ts`) transforma 460 pedidos em agregados por zona, restaurante e etapa do atraso. O prompt fica pequeno, barato e o modelo não precisa fazer conta.
+- **Detecção por regra, julgamento por IA.** "O pedido passou do prazo?" é uma comparação, não precisa de LLM. A IA entra onde há interpretação: causa, priorização, recomendação e texto.
+- **Saída estruturada.** Cada agente devolve JSON tipado, então a interface desenha cada resultado do jeito certo (lista de alertas, barra de causas, tabela, quadro de ações, documento) em vez de despejar texto.
+- **Streaming.** A rota `/api/run` transmite os eventos de cada agente em NDJSON e a interface mostra o progresso ao vivo.
+- **Modo simulado.** Sem chave de API, os agentes usam lógica local que produz o mesmo formato de saída. A demo funciona sempre, e o modo é sinalizado na tela.
 
-To learn more about Next.js, take a look at the following resources:
+## Rodando
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm install
+cp .env.example .env.local   # coloque sua ANTHROPIC_API_KEY para usar o Claude
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Sem `ANTHROPIC_API_KEY` o app roda em modo simulado.
 
-## Deploy on Vercel
+## Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 15 (App Router), TypeScript, Tailwind CSS 4, Anthropic SDK.
