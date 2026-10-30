@@ -40,7 +40,7 @@ type Props = {
   stages: StageTimes;
 };
 
-const KEY_STORAGE = "foodops_anthropic_key";
+const KEY_STORAGE = "delivery_ops_anthropic_key";
 
 // ───────── peças pequenas ─────────
 

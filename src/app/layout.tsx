@@ -3,7 +3,7 @@ import "@fontsource-variable/geist";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FoodOps AI",
+  title: "Delivery Ops Agents",
   description: "Central de operações de delivery com 5 agentes de IA que detectam, explicam e propõem ações para atrasos.",
 };
 

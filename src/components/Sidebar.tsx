@@ -1,6 +1,6 @@
 "use client";
 
-import { Bike, ChevronRight, ChevronsUpDown, LayoutGrid, LifeBuoy, Loader2, MapPin, Package, Settings, Store, Check, CircleAlert } from "lucide-react";
+import { Bike, ChevronRight, LayoutGrid, LifeBuoy, Loader2, MapPin, Package, Settings, Store, Check, CircleAlert } from "lucide-react";
 import type { AgentId } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -34,14 +34,11 @@ export default function Sidebar({ status, times }: { status: Record<AgentId, Age
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r bg-background lg:flex">
       <div className="flex items-center gap-3 border-b px-5 py-4">
-        <div className="grid size-9 place-items-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">F</div>
+        <div className="grid size-9 place-items-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">D</div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold leading-tight">FoodOps AI</p>
+          <p className="whitespace-nowrap text-sm font-semibold leading-tight">Delivery Ops Agents</p>
           <p className="text-xs text-muted-foreground">Operações Fortaleza</p>
         </div>
-        <button className="grid size-7 place-items-center rounded-md border text-muted-foreground" aria-label="Trocar cidade">
-          <ChevronsUpDown className="size-3.5" />
-        </button>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4">

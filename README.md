@@ -1,4 +1,4 @@
-# FoodOps AI
+# Delivery Ops Agents
 
 Central de operações de delivery em que cinco agentes de IA leem a operação de um pico de jantar, descobrem por que os pedidos estão atrasando e entregam um plano de ação para o gestor.
 
