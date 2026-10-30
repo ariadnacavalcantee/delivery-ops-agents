@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   ArrowDownRight, ArrowUpRight, Bell, CalendarClock, ChevronDown, Moon, Package, Play, RotateCcw, Search,
-  Sparkles, Sun, TriangleAlert, Wallet,
+  KeyRound, Sparkles, Sun, TriangleAlert, Wallet, X,
 } from "lucide-react";
+import { generateOperation } from "@/lib/data";
+import { runPipeline } from "@/lib/agents/orchestrator";
+import { MODEL, setApiKey } from "@/lib/agents/llm";
 import type {
   ActionsOutput, AgentId, DiagnosisOutput, MonitorOutput, ReportOutput, RestaurantsOutput, RunEvent,
 } from "@/lib/types";
@@ -35,9 +38,9 @@ type Props = {
   baseline: number;
   timeline: Timeline;
   stages: StageTimes;
-  live: boolean;
-  model: string;
 };
+
+const KEY_STORAGE = "foodops_anthropic_key";
 
 // ───────── peças pequenas ─────────
 
@@ -106,7 +109,34 @@ const OWNER: Record<string, string> = { operacoes: "Operações", logistica: "Lo
 
 // ───────── página ─────────
 
-export default function Dashboard({ city, overview, baseline, timeline, stages, live, model }: Props) {
+export default function Dashboard({ city, overview, baseline, timeline, stages }: Props) {
+  const [live, setLive] = useState(false);
+  const [keyFormOpen, setKeyFormOpen] = useState(false);
+  const [keyDraft, setKeyDraft] = useState("");
+
+  useEffect(() => {
+    try {
+      const k = localStorage.getItem(KEY_STORAGE);
+      if (k) { setApiKey(k); setLive(true); }
+    } catch {}
+  }, []);
+
+  function saveKey() {
+    const k = keyDraft.trim();
+    if (!k) return;
+    setApiKey(k);
+    setLive(true);
+    setKeyFormOpen(false);
+    setKeyDraft("");
+    try { localStorage.setItem(KEY_STORAGE, k); } catch {}
+  }
+
+  function removeKey() {
+    setApiKey(null);
+    setLive(false);
+    try { localStorage.removeItem(KEY_STORAGE); } catch {}
+  }
+
   const [status, setStatus] = useState(allIdle);
   const [lastLog, setLastLog] = useState<Partial<Record<AgentId, string>>>({});
   const [times, setTimes] = useState<Partial<Record<AgentId, number>>>({});
@@ -138,21 +168,10 @@ export default function Dashboard({ city, overview, baseline, timeline, stages, 
     setReportOpen(false);
     setRunning(true);
     try {
-      const res = await fetch("/api/run", { method: "POST" });
-      if (!res.body) throw new Error("O servidor não respondeu.");
-      const reader = res.body.getReader();
-      const dec = new TextDecoder();
-      let buf = "";
-      for (;;) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buf += dec.decode(value, { stream: true });
-        const lines = buf.split("\n");
-        buf = lines.pop() ?? "";
-        for (const l of lines) if (l.trim()) apply(JSON.parse(l));
-      }
+      // Os agentes rodam no navegador: o site é estático (GitHub Pages).
+      await runPipeline(generateOperation(), apply);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível rodar os agentes.");
+      setError((prev) => prev ?? (err instanceof Error ? err.message : "Não foi possível rodar os agentes."));
     } finally {
       setRunning(false);
     }
@@ -205,12 +224,43 @@ export default function Dashboard({ city, overview, baseline, timeline, stages, 
         </header>
 
         <div className="space-y-4 px-4 py-6 sm:px-8">
-          <p className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className={cn("size-1.5 rounded-full", live ? "bg-success" : "bg-muted-foreground")} />
-            {live
-              ? `Agentes conectados ao Claude (${model})`
-              : "Modo simulado: os agentes usam lógica local. Adicione ANTHROPIC_API_KEY para usar o Claude."}
-          </p>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-muted-foreground">
+            <span className="flex items-center gap-2">
+              <span className={cn("size-1.5 rounded-full", live ? "bg-success" : "bg-muted-foreground")} />
+              {live ? `Agentes conectados ao Claude (${MODEL}) com a sua chave` : "Modo simulado: os agentes usam lógica local, sem IA."}
+            </span>
+            {live ? (
+              <button onClick={removeKey} className="underline underline-offset-2 hover:text-foreground">Remover chave</button>
+            ) : !keyFormOpen ? (
+              <button onClick={() => setKeyFormOpen(true)} className="flex items-center gap-1 font-medium text-primary underline-offset-2 hover:underline">
+                <KeyRound className="size-3.5" /> Usar o Claude com a minha chave
+              </button>
+            ) : null}
+          </div>
+
+          {keyFormOpen && !live && (
+            <form
+              onSubmit={(e) => { e.preventDefault(); saveKey(); }}
+              className="flex flex-col gap-3 rounded-xl border bg-card p-4 sm:flex-row sm:items-end"
+            >
+              <label className="flex-1 text-sm">
+                <span className="font-medium">Chave da API da Anthropic</span>
+                <span className="mt-0.5 block text-xs text-muted-foreground">Fica salva só neste navegador e vai direto para a Anthropic. Este site não tem servidor.</span>
+                <input
+                  type="password"
+                  autoComplete="off"
+                  value={keyDraft}
+                  onChange={(e) => setKeyDraft(e.target.value)}
+                  placeholder="sk-ant-..."
+                  className="mt-2 h-9 w-full rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                />
+              </label>
+              <div className="flex gap-2">
+                <Button type="button" variant="ghost" onClick={() => setKeyFormOpen(false)}><X /> Cancelar</Button>
+                <Button type="submit" disabled={!keyDraft.trim()}>Salvar chave</Button>
+              </div>
+            </form>
+          )}
 
           {error && (
             <p role="alert" className="flex items-center gap-2 rounded-lg border border-critical/40 bg-critical-soft px-4 py-3 text-sm text-critical">

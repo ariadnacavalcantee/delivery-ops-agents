@@ -1,15 +1,18 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-export const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
+export const MODEL = "claude-sonnet-5-5";
 
-export function hasApiKey() {
-  return Boolean(process.env.ANTHROPIC_API_KEY);
+// O site é estático (GitHub Pages): não há servidor para guardar uma chave.
+// Quem quiser ver os agentes com o Claude de verdade informa a própria chave,
+// que fica só no navegador dessa pessoa e vai direto para a API da Anthropic.
+let client: Anthropic | null = null;
+
+export function setApiKey(key: string | null) {
+  client = key ? new Anthropic({ apiKey: key, dangerouslyAllowBrowser: true }) : null;
 }
 
-let client: Anthropic | null = null;
-function getClient() {
-  if (!client) client = new Anthropic();
-  return client;
+export function hasApiKey() {
+  return client !== null;
 }
 
 const BASE_RULES = `Você é um agente do FoodOps AI, central de operações de delivery.
@@ -23,7 +26,8 @@ export async function callJSON<T>(opts: {
   schemaHint: string;
   maxTokens?: number;
 }): Promise<{ data: T; tokens: number }> {
-  const res = await getClient().messages.create({
+  if (!client) throw new Error("Nenhuma chave de API configurada.");
+  const res = await client.messages.create({
     model: MODEL,
     max_tokens: opts.maxTokens ?? 2000,
     system: `${BASE_RULES}\n\n${opts.system}\n\nFormato de saída (JSON):\n${opts.schemaHint}`,

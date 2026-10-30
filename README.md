@@ -32,18 +32,20 @@ Diagnóstico e Restaurantes não dependem um do outro, então rodam em paralelo.
 - **Os agentes recebem indicadores, não pedidos crus.** Uma camada determinística (`src/lib/analysis.ts`) transforma 460 pedidos em agregados por zona, restaurante e etapa do atraso. O prompt fica pequeno, barato e o modelo não precisa fazer conta.
 - **Detecção por regra, julgamento por IA.** "O pedido passou do prazo?" é uma comparação, não precisa de LLM. A IA entra onde há interpretação: causa, priorização, recomendação e texto.
 - **Saída estruturada.** Cada agente devolve JSON tipado, então a interface desenha cada resultado do jeito certo (lista de alertas, barra de causas, tabela, quadro de ações, documento) em vez de despejar texto.
-- **Streaming.** A rota `/api/run` transmite os eventos de cada agente em NDJSON e a interface mostra o progresso ao vivo.
+- **Eventos ao vivo.** O orquestrador emite um evento a cada passo de cada agente, e a interface mostra o progresso enquanto eles trabalham.
 - **Modo simulado.** Sem chave de API, os agentes usam lógica local que produz o mesmo formato de saída. A demo funciona sempre, e o modo é sinalizado na tela.
 
 ## Rodando
 
 ```bash
 npm install
-cp .env.example .env.local   # coloque sua ANTHROPIC_API_KEY para usar o Claude
 npm run dev
 ```
 
-Sem `ANTHROPIC_API_KEY` o app roda em modo simulado.
+O site é estático e publicado no GitHub Pages a cada push na `main` (ver `.github/workflows/pages.yml`). Como não existe servidor, os agentes rodam no navegador:
+
+- **Modo simulado (padrão):** lógica local, sem IA, para a demo funcionar sempre.
+- **Com o Claude:** clique em "Usar o Claude com a minha chave" e informe uma chave da API da Anthropic. Ela fica só no navegador de quem usa e vai direto para a API.
 
 ## Stack
 
