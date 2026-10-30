@@ -1,62 +1,73 @@
-export type Zone = {
+// ───────── Dados (gerados por scripts/build_data.py a partir da base pública da Olist) ─────────
+
+export type StageBlock = { approve: number; handover: number; transit: number; total: number; promised: number };
+
+export type StateStat = {
+  state: string;
+  orders: number;
+  lateRatePct: number;
+  baselineLateRatePct: number | null;
+  transitDays: number;
+  baselineTransitDays: number | null;
+  promisedDays: number;
+  baselinePromisedDays: number | null;
+  review: number | null;
+};
+
+export type SellerStat = {
+  sellerId: string;
+  state: string;
+  orders: number;
+  lateRatePct: number;
+  postedLatePct: number; // postou depois do limite combinado
+  handoverDays: number;
+  outsideSpPct: number;
+  orders90d: number;
+  lateRate90dPct: number | null;
+  postedLate90dPct: number | null;
+};
+
+export type Scenario = {
   id: string;
-  name: string;
-  raining: boolean;
-  activeCouriers: number;
-  openOrders: number;
+  label: string;
+  title: string;
+  start: string;
+  end: string;
+  baseStart: string;
+  baseEnd: string;
+  overview: {
+    orders: number;
+    lateOrders: number;
+    lateRatePct: number;
+    baselineLateRatePct: number;
+    avgDelayLateDays: number;
+    review: number;
+    baselineReview: number;
+    reviewLate: number;
+    reviewOnTime: number;
+    sellerLatePct: number;
+    baselineSellerLatePct: number;
+  };
+  stages: { period: StageBlock; baseline: StageBlock };
+  causes: { component: string; lateOrders: number; sharePct: number }[];
+  timeline: { week: string; label: string; inPeriod: boolean; orders: number; lateRatePct: number }[];
+  states: StateStat[];
+  heatmap: { state: string; cells: number[] }[];
+  sellers: SellerStat[];
 };
 
-export type Restaurant = {
-  id: string;
-  name: string;
-  cuisine: string;
-  zoneId: string;
-  basePrepMin: number;
-  rating: number;
+export type Dataset = {
+  source: { name: string; url: string; license: string; deliveredOrders: number; reviewLate: number; reviewOnTime: number };
+  scenarios: Scenario[];
 };
 
-export type Order = {
-  id: string;
-  restaurantId: string;
-  zoneId: string;
-  placedAt: string; // ISO
-  promisedMin: number; // tempo prometido ao cliente
-  prepMin: number; // tempo real de preparo
-  pickupWaitMin: number; // entregador esperando no restaurante ou restaurante esperando entregador
-  courierAssignMin: number; // tempo até achar entregador
-  travelMin: number;
-  distanceKm: number;
-  totalMin: number;
-  delayMin: number; // totalMin - promisedMin (positivo = atrasado)
-  value: number;
-  addressIssue: boolean;
-  status: "entregue" | "em_rota" | "preparando";
-};
-
-export type RestaurantHistory = {
-  restaurantId: string;
-  days: { date: string; orders: number; lateRate: number; avgPrepMin: number; cancellations: number }[];
-};
-
-export type Operation = {
-  city: string;
-  window: string;
-  generatedAt: string;
-  zones: Zone[];
-  restaurants: Restaurant[];
-  orders: Order[];
-  history: RestaurantHistory[];
-};
-
-// ---- Saídas dos agentes ----
+// ───────── Saídas dos agentes ─────────
 
 export type Alert = {
   id: string;
   severity: "critico" | "alto" | "medio";
   title: string;
   detail: string;
-  zoneId?: string;
-  restaurantId?: string;
   affectedOrders: number;
 };
 
@@ -64,57 +75,46 @@ export type MonitorOutput = {
   summary: string;
   lateOrders: number;
   lateRate: number;
-  avgDelayMin: number;
   alerts: Alert[];
 };
 
 export type Cause = {
   cause: string;
-  category: "cozinha" | "entregador" | "clima" | "demanda" | "endereco" | "outro";
+  category: "transporte" | "vendedor" | "prazo" | "pagamento" | "demanda" | "outro";
   share: number; // 0-1 dos atrasos explicados
   evidence: string;
   confidence: "alta" | "media" | "baixa";
 };
 
-export type DiagnosisOutput = {
-  summary: string;
-  causes: Cause[];
-};
+export type DiagnosisOutput = { summary: string; causes: Cause[] };
 
-export type RestaurantFinding = {
-  restaurantId: string;
-  restaurantName: string;
+export type SellerFinding = {
+  sellerId: string;
+  state: string;
   pattern: string;
+  origin: "postagem" | "transporte";
   trend: "piorando" | "estavel" | "melhorando";
-  lateRate14d: number;
-  lateRateToday: number;
+  lateRate90d: number | null;
+  lateRateNow: number;
   risk: "alto" | "medio" | "baixo";
 };
 
-export type RestaurantsOutput = {
-  summary: string;
-  findings: RestaurantFinding[];
-};
+export type SellersOutput = { summary: string; findings: SellerFinding[] };
 
 export type Action = {
   title: string;
   description: string;
-  owner: "operacoes" | "logistica" | "comercial" | "produto";
-  urgency: "agora" | "hoje" | "esta_semana";
+  owner: "operacoes" | "logistica" | "comercial" | "produto" | "atendimento";
+  urgency: "agora" | "esta_semana" | "proximo_pico";
   expectedImpact: string;
   target?: string;
 };
 
-export type ActionsOutput = {
-  summary: string;
-  actions: Action[];
-};
+export type ActionsOutput = { summary: string; actions: Action[] };
 
-export type ReportOutput = {
-  markdown: string;
-};
+export type ReportOutput = { markdown: string };
 
-export type AgentId = "monitor" | "diagnostico" | "restaurantes" | "acoes" | "relatorio";
+export type AgentId = "monitor" | "diagnostico" | "vendedores" | "acoes" | "relatorio";
 
 export type RunEvent =
   | { type: "run_start"; mode: "live" | "simulado"; model?: string }

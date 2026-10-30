@@ -1,4 +1,4 @@
-import type { AgentId, Operation, RunEvent } from "../types";
+import type { AgentId, RunEvent, Scenario } from "../types";
 import { AGENTS, type Ctx } from "./agents";
 import { hasApiKey, MODEL } from "./llm";
 
@@ -14,12 +14,12 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /**
  * Orquestração:
- *   Monitor → [Diagnóstico ∥ Restaurantes] → Ações → Relatório
- * Diagnóstico e Restaurantes não dependem um do outro, então rodam em paralelo.
+ *   Monitor → [Diagnóstico ∥ Vendedores] → Ações → Relatório
+ * Diagnóstico e Vendedores não dependem um do outro, então rodam em paralelo.
  */
-export async function runPipeline(op: Operation, emit: (e: RunEvent) => void) {
+export async function runPipeline(sc: Scenario, emit: (e: RunEvent) => void) {
   const live = hasApiKey();
-  const ctx: Ctx = { op };
+  const ctx: Ctx = { sc };
   const t0 = Date.now();
   emit({ type: "run_start", mode: live ? "live" : "simulado", model: live ? MODEL : undefined });
 
@@ -30,7 +30,7 @@ export async function runPipeline(op: Operation, emit: (e: RunEvent) => void) {
     try {
       const log = (message: string) => emit({ type: "agent_log", agent: id, message: brDecimals(message) });
       const { output, tokens } = await agent.run(ctx, live, log);
-      if (!live) await sleep(900 + Math.random() * 900); // ritmo legível no modo simulado
+      if (!live && typeof window !== "undefined") await sleep(900 + Math.random() * 900); // ritmo legível no modo simulado
       (ctx as Record<string, unknown>)[id] = output;
       emit({ type: "agent_done", agent: id, output: brDecimals(output), ms: Date.now() - start, tokens });
     } catch (err) {
@@ -40,7 +40,7 @@ export async function runPipeline(op: Operation, emit: (e: RunEvent) => void) {
   };
 
   await step("monitor");
-  await Promise.all([step("diagnostico"), step("restaurantes")]);
+  await Promise.all([step("diagnostico"), step("vendedores")]);
   await step("acoes");
   await step("relatorio");
 

@@ -1,0 +1,3438 @@
+{
+ "source": {
+  "name": "Brazilian E-Commerce Public Dataset by Olist",
+  "url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
+  "license": "CC BY-NC-SA 4.0",
+  "deliveredOrders": 95082,
+  "reviewLate": 2.3,
+  "reviewOnTime": 4.3
+ },
+ "scenarios": [
+  {
+   "id": "fev-mar-2018",
+   "label": "Fev–mar 2018",
+   "title": "Crise de fevereiro e março de 2018",
+   "start": "2018-02-12",
+   "end": "2018-03-19",
+   "baseStart": "2018-01-01",
+   "baseEnd": "2018-02-12",
+   "overview": {
+    "orders": 8288,
+    "lateOrders": 1739,
+    "lateRatePct": 21.0,
+    "baselineLateRatePct": 6.1,
+    "avgDelayLateDays": 11.4,
+    "review": 3.7,
+    "baselineReview": 4.1,
+    "reviewLate": 2.0,
+    "reviewOnTime": 4.2,
+    "sellerLatePct": 9.1,
+    "baselineSellerLatePct": 11.7
+   },
+   "stages": {
+    "period": {
+     "approve": 0.4,
+     "handover": 3.0,
+     "transit": 14.2,
+     "total": 17.6,
+     "promised": 22.7
+    },
+    "baseline": {
+     "approve": 0.4,
+     "handover": 3.3,
+     "transit": 11.0,
+     "total": 14.6,
+     "promised": 26.6
+    }
+   },
+   "causes": [
+    {
+     "component": "transporte",
+     "lateOrders": 1460,
+     "sharePct": 84.0
+    },
+    {
+     "component": "prazo_prometido_curto",
+     "lateOrders": 203,
+     "sharePct": 11.7
+    },
+    {
+     "component": "postagem_do_vendedor",
+     "lateOrders": 75,
+     "sharePct": 4.3
+    },
+    {
+     "component": "aprovacao_do_pagamento",
+     "lateOrders": 1,
+     "sharePct": 0.1
+    }
+   ],
+   "timeline": [
+    {
+     "week": "2018-01-01",
+     "label": "1 jan",
+     "inPeriod": false,
+     "orders": 1340,
+     "lateRatePct": 3.4
+    },
+    {
+     "week": "2018-01-08",
+     "label": "8 jan",
+     "inPeriod": false,
+     "orders": 1738,
+     "lateRatePct": 4.0
+    },
+    {
+     "week": "2018-01-15",
+     "label": "15 jan",
+     "inPeriod": false,
+     "orders": 1704,
+     "lateRatePct": 6.8
+    },
+    {
+     "week": "2018-01-22",
+     "label": "22 jan",
+     "inPeriod": false,
+     "orders": 1545,
+     "lateRatePct": 7.4
+    },
+    {
+     "week": "2018-01-29",
+     "label": "29 jan",
+     "inPeriod": false,
+     "orders": 1537,
+     "lateRatePct": 6.5
+    },
+    {
+     "week": "2018-02-05",
+     "label": "5 fev",
+     "inPeriod": false,
+     "orders": 1536,
+     "lateRatePct": 8.6
+    },
+    {
+     "week": "2018-02-12",
+     "label": "12 fev",
+     "inPeriod": true,
+     "orders": 1589,
+     "lateRatePct": 12.9
+    },
+    {
+     "week": "2018-02-19",
+     "label": "19 fev",
+     "inPeriod": true,
+     "orders": 1713,
+     "lateRatePct": 19.0
+    },
+    {
+     "week": "2018-02-26",
+     "label": "26 fev",
+     "inPeriod": true,
+     "orders": 1849,
+     "lateRatePct": 26.3
+    },
+    {
+     "week": "2018-03-05",
+     "label": "5 mar",
+     "inPeriod": true,
+     "orders": 1597,
+     "lateRatePct": 24.8
+    },
+    {
+     "week": "2018-03-12",
+     "label": "12 mar",
+     "inPeriod": true,
+     "orders": 1540,
+     "lateRatePct": 21.1
+    }
+   ],
+   "states": [
+    {
+     "state": "SP",
+     "orders": 3346,
+     "lateRatePct": 10.5,
+     "baselineLateRatePct": 3.7,
+     "transitDays": 7.9,
+     "baselineTransitDays": 6.8,
+     "promisedDays": 18.4,
+     "baselinePromisedDays": 22.0,
+     "review": 4.0
+    },
+    {
+     "state": "RJ",
+     "orders": 1128,
+     "lateRatePct": 42.3,
+     "baselineLateRatePct": 13.6,
+     "transitDays": 22.8,
+     "baselineTransitDays": 15.1,
+     "promisedDays": 25.3,
+     "baselinePromisedDays": 28.0,
+     "review": 3.1
+    },
+    {
+     "state": "MG",
+     "orders": 991,
+     "lateRatePct": 19.0,
+     "baselineLateRatePct": 3.9,
+     "transitDays": 13.5,
+     "baselineTransitDays": 9.9,
+     "promisedDays": 23.4,
+     "baselinePromisedDays": 27.9,
+     "review": 3.7
+    },
+    {
+     "state": "RS",
+     "orders": 474,
+     "lateRatePct": 21.5,
+     "baselineLateRatePct": 7.8,
+     "transitDays": 18.1,
+     "baselineTransitDays": 16.2,
+     "promisedDays": 27.8,
+     "baselinePromisedDays": 33.0,
+     "review": 3.8
+    },
+    {
+     "state": "PR",
+     "orders": 443,
+     "lateRatePct": 14.4,
+     "baselineLateRatePct": 2.9,
+     "transitDays": 12.3,
+     "baselineTransitDays": 10.4,
+     "promisedDays": 23.1,
+     "baselinePromisedDays": 27.8,
+     "review": 3.9
+    },
+    {
+     "state": "SC",
+     "orders": 310,
+     "lateRatePct": 29.0,
+     "baselineLateRatePct": 10.1,
+     "transitDays": 17.3,
+     "baselineTransitDays": 15.6,
+     "promisedDays": 25.1,
+     "baselinePromisedDays": 29.6,
+     "review": 3.6
+    },
+    {
+     "state": "BA",
+     "orders": 286,
+     "lateRatePct": 31.1,
+     "baselineLateRatePct": 7.0,
+     "transitDays": 21.0,
+     "baselineTransitDays": 15.7,
+     "promisedDays": 27.4,
+     "baselinePromisedDays": 31.9,
+     "review": 3.4
+    },
+    {
+     "state": "DF",
+     "orders": 185,
+     "lateRatePct": 18.9,
+     "baselineLateRatePct": 4.4,
+     "transitDays": 14.8,
+     "baselineTransitDays": 11.7,
+     "promisedDays": 23.1,
+     "baselinePromisedDays": 26.8,
+     "review": 3.8
+    },
+    {
+     "state": "GO",
+     "orders": 176,
+     "lateRatePct": 22.7,
+     "baselineLateRatePct": 6.4,
+     "transitDays": 17.1,
+     "baselineTransitDays": 13.5,
+     "promisedDays": 24.5,
+     "baselinePromisedDays": 29.3,
+     "review": 3.7
+    },
+    {
+     "state": "ES",
+     "orders": 161,
+     "lateRatePct": 30.4,
+     "baselineLateRatePct": 7.6,
+     "transitDays": 19.0,
+     "baselineTransitDays": 12.5,
+     "promisedDays": 23.3,
+     "baselinePromisedDays": 28.2,
+     "review": 3.4
+    },
+    {
+     "state": "PE",
+     "orders": 139,
+     "lateRatePct": 20.9,
+     "baselineLateRatePct": 6.0,
+     "transitDays": 19.1,
+     "baselineTransitDays": 15.1,
+     "promisedDays": 28.2,
+     "baselinePromisedDays": 33.5,
+     "review": 3.8
+    },
+    {
+     "state": "CE",
+     "orders": 106,
+     "lateRatePct": 50.9,
+     "baselineLateRatePct": 17.8,
+     "transitDays": 27.4,
+     "baselineTransitDays": 23.6,
+     "promisedDays": 27.7,
+     "baselinePromisedDays": 33.0,
+     "review": 2.8
+    },
+    {
+     "state": "PA",
+     "orders": 83,
+     "lateRatePct": 39.8,
+     "baselineLateRatePct": 8.7,
+     "transitDays": 31.2,
+     "baselineTransitDays": 23.3,
+     "promisedDays": 36.5,
+     "baselinePromisedDays": 41.3,
+     "review": 3.1
+    },
+    {
+     "state": "MS",
+     "orders": 79,
+     "lateRatePct": 36.7,
+     "baselineLateRatePct": 4.5,
+     "transitDays": 19.7,
+     "baselineTransitDays": 12.7,
+     "promisedDays": 23.9,
+     "baselinePromisedDays": 29.3,
+     "review": 3.5
+    },
+    {
+     "state": "MT",
+     "orders": 74,
+     "lateRatePct": 25.7,
+     "baselineLateRatePct": 2.8,
+     "transitDays": 21.1,
+     "baselineTransitDays": 15.6,
+     "promisedDays": 29.2,
+     "baselinePromisedDays": 34.2,
+     "review": 3.7
+    },
+    {
+     "state": "MA",
+     "orders": 63,
+     "lateRatePct": 49.2,
+     "baselineLateRatePct": 7.8,
+     "transitDays": 25.4,
+     "baselineTransitDays": 18.5,
+     "promisedDays": 27.5,
+     "baselinePromisedDays": 31.6,
+     "review": 3.0
+    },
+    {
+     "state": "PB",
+     "orders": 47,
+     "lateRatePct": 12.8,
+     "baselineLateRatePct": 9.1,
+     "transitDays": 17.9,
+     "baselineTransitDays": 17.5,
+     "promisedDays": 31.3,
+     "baselinePromisedDays": 35.6,
+     "review": 4.0
+    }
+   ],
+   "heatmap": [
+    {
+     "state": "SP",
+     "cells": [
+      2.2,
+      2.9,
+      4.3,
+      3.6,
+      4.4,
+      4.5,
+      6.2,
+      8.6,
+      14.8,
+      13.4,
+      9.7
+     ]
+    },
+    {
+     "state": "RJ",
+     "cells": [
+      7.9,
+      11.0,
+      15.6,
+      15.2,
+      13.1,
+      19.6,
+      29.8,
+      48.1,
+      49.6,
+      42.5,
+      36.2
+     ]
+    },
+    {
+     "state": "MG",
+     "cells": [
+      1.4,
+      2.8,
+      2.9,
+      4.0,
+      4.8,
+      6.7,
+      6.6,
+      10.8,
+      27.2,
+      26.5,
+      20.7
+     ]
+    },
+    {
+     "state": "RS",
+     "cells": [
+      2.7,
+      3.8,
+      11.6,
+      11.6,
+      8.5,
+      7.3,
+      14.9,
+      16.3,
+      19.6,
+      27.4,
+      30.4
+     ]
+    },
+    {
+     "state": "PR",
+     "cells": [
+      3.2,
+      1.0,
+      1.2,
+      1.1,
+      1.5,
+      9.9,
+      10.1,
+      10.1,
+      18.9,
+      15.5,
+      16.5
+     ]
+    },
+    {
+     "state": "SC",
+     "cells": [
+      6.9,
+      5.2,
+      13.0,
+      17.5,
+      6.0,
+      13.2,
+      27.9,
+      41.8,
+      26.8,
+      26.8,
+      18.8
+     ]
+    },
+    {
+     "state": "BA",
+     "cells": [
+      4.0,
+      6.5,
+      8.8,
+      7.3,
+      8.7,
+      7.1,
+      23.9,
+      25.0,
+      32.3,
+      31.0,
+      41.7
+     ]
+    },
+    {
+     "state": "DF",
+     "cells": [
+      0,
+      0,
+      0,
+      12.9,
+      2.2,
+      9.5,
+      20.0,
+      5.4,
+      15.0,
+      33.3,
+      24.2
+     ]
+    }
+   ],
+   "sellers": [
+    {
+     "sellerId": "ede0c0",
+     "state": "SP",
+     "orders": 25,
+     "lateRatePct": 56.0,
+     "postedLatePct": 32.0,
+     "handoverDays": 4.9,
+     "outsideSpPct": 56.0,
+     "orders90d": 0,
+     "lateRate90dPct": null,
+     "postedLate90dPct": null
+    },
+    {
+     "sellerId": "8f2ce0",
+     "state": "SP",
+     "orders": 20,
+     "lateRatePct": 50.0,
+     "postedLatePct": 5.0,
+     "handoverDays": 3.3,
+     "outsideSpPct": 60.0,
+     "orders90d": 46,
+     "lateRate90dPct": 4.3,
+     "postedLate90dPct": 6.5
+    },
+    {
+     "sellerId": "2c9e54",
+     "state": "SP",
+     "orders": 24,
+     "lateRatePct": 50.0,
+     "postedLatePct": 4.2,
+     "handoverDays": 1.4,
+     "outsideSpPct": 54.2,
+     "orders90d": 31,
+     "lateRate90dPct": 12.9,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "c3867b",
+     "state": "SP",
+     "orders": 45,
+     "lateRatePct": 44.4,
+     "postedLatePct": 4.4,
+     "handoverDays": 3.2,
+     "outsideSpPct": 55.6,
+     "orders90d": 41,
+     "lateRate90dPct": 7.3,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "88460e",
+     "state": "PR",
+     "orders": 72,
+     "lateRatePct": 44.4,
+     "postedLatePct": 90.3,
+     "handoverDays": 12.8,
+     "outsideSpPct": 47.2,
+     "orders90d": 30,
+     "lateRate90dPct": 16.7,
+     "postedLate90dPct": 70.0
+    },
+    {
+     "sellerId": "fa1c13",
+     "state": "SP",
+     "orders": 47,
+     "lateRatePct": 42.6,
+     "postedLatePct": 8.5,
+     "handoverDays": 2.9,
+     "outsideSpPct": 78.7,
+     "orders90d": 146,
+     "lateRate90dPct": 10.3,
+     "postedLate90dPct": 6.2
+    },
+    {
+     "sellerId": "4869f7",
+     "state": "SP",
+     "orders": 140,
+     "lateRatePct": 41.4,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.8,
+     "outsideSpPct": 66.4,
+     "orders90d": 238,
+     "lateRate90dPct": 10.9,
+     "postedLate90dPct": 2.5
+    },
+    {
+     "sellerId": "4a3ca9",
+     "state": "SP",
+     "orders": 128,
+     "lateRatePct": 40.6,
+     "postedLatePct": 10.9,
+     "handoverDays": 2.3,
+     "outsideSpPct": 51.6,
+     "orders90d": 349,
+     "lateRate90dPct": 18.6,
+     "postedLate90dPct": 17.5
+    },
+    {
+     "sellerId": "1835b5",
+     "state": "SP",
+     "orders": 40,
+     "lateRatePct": 37.5,
+     "postedLatePct": 2.5,
+     "handoverDays": 2.3,
+     "outsideSpPct": 55.0,
+     "orders90d": 131,
+     "lateRate90dPct": 15.3,
+     "postedLate90dPct": 2.3
+    },
+    {
+     "sellerId": "e5a343",
+     "state": "SP",
+     "orders": 30,
+     "lateRatePct": 36.7,
+     "postedLatePct": 10.0,
+     "handoverDays": 3.2,
+     "outsideSpPct": 63.3,
+     "orders90d": 108,
+     "lateRate90dPct": 14.8,
+     "postedLate90dPct": 28.7
+    },
+    {
+     "sellerId": "620c87",
+     "state": "RJ",
+     "orders": 86,
+     "lateRatePct": 36.0,
+     "postedLatePct": 4.7,
+     "handoverDays": 3.0,
+     "outsideSpPct": 62.8,
+     "orders90d": 194,
+     "lateRate90dPct": 8.2,
+     "postedLate90dPct": 2.1
+    },
+    {
+     "sellerId": "edb1ef",
+     "state": "RJ",
+     "orders": 20,
+     "lateRatePct": 35.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.5,
+     "outsideSpPct": 85.0,
+     "orders90d": 51,
+     "lateRate90dPct": 3.9,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "897060",
+     "state": "SP",
+     "orders": 49,
+     "lateRatePct": 34.7,
+     "postedLatePct": 8.2,
+     "handoverDays": 2.7,
+     "outsideSpPct": 61.2,
+     "orders90d": 91,
+     "lateRate90dPct": 5.5,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "816025",
+     "state": "SP",
+     "orders": 52,
+     "lateRatePct": 32.7,
+     "postedLatePct": 11.5,
+     "handoverDays": 3.0,
+     "outsideSpPct": 55.8,
+     "orders90d": 149,
+     "lateRate90dPct": 20.1,
+     "postedLate90dPct": 53.7
+    },
+    {
+     "sellerId": "70a12e",
+     "state": "SP",
+     "orders": 31,
+     "lateRatePct": 32.3,
+     "postedLatePct": 12.9,
+     "handoverDays": 3.1,
+     "outsideSpPct": 58.1,
+     "orders90d": 43,
+     "lateRate90dPct": 18.6,
+     "postedLate90dPct": 18.6
+    },
+    {
+     "sellerId": "4e9229",
+     "state": "SP",
+     "orders": 41,
+     "lateRatePct": 31.7,
+     "postedLatePct": 2.4,
+     "handoverDays": 2.8,
+     "outsideSpPct": 61.0,
+     "orders90d": 89,
+     "lateRate90dPct": 13.5,
+     "postedLate90dPct": 15.7
+    },
+    {
+     "sellerId": "d2374c",
+     "state": "SP",
+     "orders": 35,
+     "lateRatePct": 31.4,
+     "postedLatePct": 8.6,
+     "handoverDays": 2.9,
+     "outsideSpPct": 60.0,
+     "orders90d": 65,
+     "lateRate90dPct": 6.2,
+     "postedLate90dPct": 21.5
+    },
+    {
+     "sellerId": "190026",
+     "state": "SP",
+     "orders": 35,
+     "lateRatePct": 31.4,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.9,
+     "outsideSpPct": 62.9,
+     "orders90d": 96,
+     "lateRate90dPct": 10.4,
+     "postedLate90dPct": 3.1
+    },
+    {
+     "sellerId": "7d13fc",
+     "state": "SP",
+     "orders": 80,
+     "lateRatePct": 31.2,
+     "postedLatePct": 16.2,
+     "handoverDays": 3.4,
+     "outsideSpPct": 62.5,
+     "orders90d": 0,
+     "lateRate90dPct": null,
+     "postedLate90dPct": null
+    },
+    {
+     "sellerId": "f7ba60",
+     "state": "SP",
+     "orders": 40,
+     "lateRatePct": 30.0,
+     "postedLatePct": 2.5,
+     "handoverDays": 2.6,
+     "outsideSpPct": 55.0,
+     "orders90d": 40,
+     "lateRate90dPct": 5.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "218d46",
+     "state": "SP",
+     "orders": 58,
+     "lateRatePct": 29.3,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.5,
+     "outsideSpPct": 50.0,
+     "orders90d": 112,
+     "lateRate90dPct": 7.1,
+     "postedLate90dPct": 3.6
+    },
+    {
+     "sellerId": "4c2b23",
+     "state": "SP",
+     "orders": 38,
+     "lateRatePct": 28.9,
+     "postedLatePct": 42.1,
+     "handoverDays": 5.3,
+     "outsideSpPct": 55.3,
+     "orders90d": 56,
+     "lateRate90dPct": 8.9,
+     "postedLate90dPct": 42.9
+    },
+    {
+     "sellerId": "391fc6",
+     "state": "SP",
+     "orders": 32,
+     "lateRatePct": 28.1,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.4,
+     "outsideSpPct": 56.2,
+     "orders90d": 118,
+     "lateRate90dPct": 9.3,
+     "postedLate90dPct": 6.8
+    },
+    {
+     "sellerId": "8e6d77",
+     "state": "SP",
+     "orders": 29,
+     "lateRatePct": 27.6,
+     "postedLatePct": 75.9,
+     "handoverDays": 7.0,
+     "outsideSpPct": 62.1,
+     "orders90d": 39,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 12.8
+    },
+    {
+     "sellerId": "6a8b08",
+     "state": "SP",
+     "orders": 20,
+     "lateRatePct": 25.0,
+     "postedLatePct": 10.0,
+     "handoverDays": 2.7,
+     "outsideSpPct": 55.0,
+     "orders90d": 40,
+     "lateRate90dPct": 7.5,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "a416b6",
+     "state": "SP",
+     "orders": 20,
+     "lateRatePct": 25.0,
+     "postedLatePct": 10.0,
+     "handoverDays": 2.4,
+     "outsideSpPct": 45.0,
+     "orders90d": 33,
+     "lateRate90dPct": 6.1,
+     "postedLate90dPct": 9.1
+    },
+    {
+     "sellerId": "00ee68",
+     "state": "SP",
+     "orders": 20,
+     "lateRatePct": 25.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.8,
+     "outsideSpPct": 55.0,
+     "orders90d": 74,
+     "lateRate90dPct": 4.1,
+     "postedLate90dPct": 1.4
+    },
+    {
+     "sellerId": "8b321b",
+     "state": "SP",
+     "orders": 181,
+     "lateRatePct": 24.9,
+     "postedLatePct": 16.0,
+     "handoverDays": 2.5,
+     "outsideSpPct": 64.6,
+     "orders90d": 369,
+     "lateRate90dPct": 6.5,
+     "postedLate90dPct": 1.4
+    },
+    {
+     "sellerId": "7a67c8",
+     "state": "SP",
+     "orders": 83,
+     "lateRatePct": 24.1,
+     "postedLatePct": 8.4,
+     "handoverDays": 2.0,
+     "outsideSpPct": 67.5,
+     "orders90d": 177,
+     "lateRate90dPct": 4.5,
+     "postedLate90dPct": 0.6
+    },
+    {
+     "sellerId": "54a185",
+     "state": "SP",
+     "orders": 25,
+     "lateRatePct": 24.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.3,
+     "outsideSpPct": 36.0,
+     "orders90d": 32,
+     "lateRate90dPct": 6.2,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "fe2032",
+     "state": "SP",
+     "orders": 21,
+     "lateRatePct": 23.8,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.4,
+     "outsideSpPct": 42.9,
+     "orders90d": 58,
+     "lateRate90dPct": 15.5,
+     "postedLate90dPct": 15.5
+    },
+    {
+     "sellerId": "955fee",
+     "state": "SP",
+     "orders": 143,
+     "lateRatePct": 23.8,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.7,
+     "outsideSpPct": 53.1,
+     "orders90d": 345,
+     "lateRate90dPct": 3.5,
+     "postedLate90dPct": 0.3
+    },
+    {
+     "sellerId": "0dd184",
+     "state": "SP",
+     "orders": 30,
+     "lateRatePct": 23.3,
+     "postedLatePct": 6.7,
+     "handoverDays": 2.8,
+     "outsideSpPct": 60.0,
+     "orders90d": 24,
+     "lateRate90dPct": 8.3,
+     "postedLate90dPct": 25.0
+    },
+    {
+     "sellerId": "634964",
+     "state": "RJ",
+     "orders": 45,
+     "lateRatePct": 22.2,
+     "postedLatePct": 13.3,
+     "handoverDays": 3.6,
+     "outsideSpPct": 82.2,
+     "orders90d": 71,
+     "lateRate90dPct": 5.6,
+     "postedLate90dPct": 2.8
+    },
+    {
+     "sellerId": "92eb0f",
+     "state": "SP",
+     "orders": 27,
+     "lateRatePct": 22.2,
+     "postedLatePct": 33.3,
+     "handoverDays": 5.0,
+     "outsideSpPct": 40.7,
+     "orders90d": 54,
+     "lateRate90dPct": 9.3,
+     "postedLate90dPct": 25.9
+    },
+    {
+     "sellerId": "858105",
+     "state": "SP",
+     "orders": 36,
+     "lateRatePct": 22.2,
+     "postedLatePct": 8.3,
+     "handoverDays": 3.5,
+     "outsideSpPct": 36.1,
+     "orders90d": 107,
+     "lateRate90dPct": 12.1,
+     "postedLate90dPct": 7.5
+    },
+    {
+     "sellerId": "1025f0",
+     "state": "SP",
+     "orders": 75,
+     "lateRatePct": 21.3,
+     "postedLatePct": 6.7,
+     "handoverDays": 3.2,
+     "outsideSpPct": 77.3,
+     "orders90d": 138,
+     "lateRate90dPct": 24.6,
+     "postedLate90dPct": 51.4
+    },
+    {
+     "sellerId": "16090f",
+     "state": "SP",
+     "orders": 47,
+     "lateRatePct": 21.3,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.5,
+     "outsideSpPct": 51.1,
+     "orders90d": 33,
+     "lateRate90dPct": 6.1,
+     "postedLate90dPct": 9.1
+    },
+    {
+     "sellerId": "1f50f9",
+     "state": "SP",
+     "orders": 125,
+     "lateRatePct": 20.8,
+     "postedLatePct": 20.0,
+     "handoverDays": 3.9,
+     "outsideSpPct": 65.6,
+     "orders90d": 490,
+     "lateRate90dPct": 11.4,
+     "postedLate90dPct": 9.4
+    },
+    {
+     "sellerId": "3d871d",
+     "state": "SP",
+     "orders": 39,
+     "lateRatePct": 20.5,
+     "postedLatePct": 17.9,
+     "handoverDays": 3.3,
+     "outsideSpPct": 66.7,
+     "orders90d": 413,
+     "lateRate90dPct": 9.0,
+     "postedLate90dPct": 26.9
+    },
+    {
+     "sellerId": "714254",
+     "state": "SP",
+     "orders": 49,
+     "lateRatePct": 20.4,
+     "postedLatePct": 10.2,
+     "handoverDays": 2.5,
+     "outsideSpPct": 65.3,
+     "orders90d": 80,
+     "lateRate90dPct": 6.2,
+     "postedLate90dPct": 5.0
+    },
+    {
+     "sellerId": "f8db35",
+     "state": "SP",
+     "orders": 25,
+     "lateRatePct": 20.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.7,
+     "outsideSpPct": 60.0,
+     "orders90d": 64,
+     "lateRate90dPct": 6.2,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "fa40cc",
+     "state": "SP",
+     "orders": 25,
+     "lateRatePct": 20.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.8,
+     "outsideSpPct": 48.0,
+     "orders90d": 41,
+     "lateRate90dPct": 7.3,
+     "postedLate90dPct": 7.3
+    },
+    {
+     "sellerId": "ea8482",
+     "state": "SP",
+     "orders": 176,
+     "lateRatePct": 19.9,
+     "postedLatePct": 9.7,
+     "handoverDays": 3.4,
+     "outsideSpPct": 59.7,
+     "orders90d": 452,
+     "lateRate90dPct": 8.8,
+     "postedLate90dPct": 7.3
+    },
+    {
+     "sellerId": "77530e",
+     "state": "PR",
+     "orders": 36,
+     "lateRatePct": 19.4,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.2,
+     "outsideSpPct": 69.4,
+     "orders90d": 72,
+     "lateRate90dPct": 22.2,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "da8622",
+     "state": "SP",
+     "orders": 119,
+     "lateRatePct": 19.3,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.9,
+     "outsideSpPct": 49.6,
+     "orders90d": 408,
+     "lateRate90dPct": 8.1,
+     "postedLate90dPct": 4.2
+    },
+    {
+     "sellerId": "e97799",
+     "state": "SP",
+     "orders": 73,
+     "lateRatePct": 19.2,
+     "postedLatePct": 9.6,
+     "handoverDays": 2.6,
+     "outsideSpPct": 34.2,
+     "orders90d": 126,
+     "lateRate90dPct": 6.3,
+     "postedLate90dPct": 10.3
+    },
+    {
+     "sellerId": "b2479f",
+     "state": "SP",
+     "orders": 21,
+     "lateRatePct": 19.0,
+     "postedLatePct": 9.5,
+     "handoverDays": 2.2,
+     "outsideSpPct": 52.4,
+     "orders90d": 19,
+     "lateRate90dPct": 15.8,
+     "postedLate90dPct": 26.3
+    },
+    {
+     "sellerId": "cc419e",
+     "state": "SP",
+     "orders": 122,
+     "lateRatePct": 18.9,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.2,
+     "outsideSpPct": 61.5,
+     "orders90d": 472,
+     "lateRate90dPct": 6.1,
+     "postedLate90dPct": 0.2
+    },
+    {
+     "sellerId": "c826c4",
+     "state": "SP",
+     "orders": 80,
+     "lateRatePct": 18.8,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.3,
+     "outsideSpPct": 75.0,
+     "orders90d": 168,
+     "lateRate90dPct": 4.2,
+     "postedLate90dPct": 13.1
+    },
+    {
+     "sellerId": "2e1c9f",
+     "state": "SP",
+     "orders": 22,
+     "lateRatePct": 18.2,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.4,
+     "outsideSpPct": 50.0,
+     "orders90d": 30,
+     "lateRate90dPct": 3.3,
+     "postedLate90dPct": 3.3
+    },
+    {
+     "sellerId": "562fc2",
+     "state": "SP",
+     "orders": 33,
+     "lateRatePct": 18.2,
+     "postedLatePct": 6.1,
+     "handoverDays": 2.4,
+     "outsideSpPct": 66.7,
+     "orders90d": 49,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "0241d4",
+     "state": "PR",
+     "orders": 28,
+     "lateRatePct": 17.9,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.8,
+     "outsideSpPct": 78.6,
+     "orders90d": 55,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "cbd996",
+     "state": "SP",
+     "orders": 24,
+     "lateRatePct": 16.7,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.7,
+     "outsideSpPct": 50.0,
+     "orders90d": 26,
+     "lateRate90dPct": 11.5,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "7d76b6",
+     "state": "SP",
+     "orders": 25,
+     "lateRatePct": 16.0,
+     "postedLatePct": 8.0,
+     "handoverDays": 4.0,
+     "outsideSpPct": 52.0,
+     "orders90d": 56,
+     "lateRate90dPct": 14.3,
+     "postedLate90dPct": 23.2
+    },
+    {
+     "sellerId": "7ddcbb",
+     "state": "SP",
+     "orders": 25,
+     "lateRatePct": 16.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.4,
+     "outsideSpPct": 60.0,
+     "orders90d": 115,
+     "lateRate90dPct": 11.3,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "4b9750",
+     "state": "SP",
+     "orders": 26,
+     "lateRatePct": 15.4,
+     "postedLatePct": 7.7,
+     "handoverDays": 1.8,
+     "outsideSpPct": 30.8,
+     "orders90d": 31,
+     "lateRate90dPct": 12.9,
+     "postedLate90dPct": 9.7
+    },
+    {
+     "sellerId": "f84fa5",
+     "state": "SP",
+     "orders": 20,
+     "lateRatePct": 15.0,
+     "postedLatePct": 5.0,
+     "handoverDays": 2.5,
+     "outsideSpPct": 50.0,
+     "orders90d": 1,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "522620",
+     "state": "PR",
+     "orders": 27,
+     "lateRatePct": 14.8,
+     "postedLatePct": 3.7,
+     "handoverDays": 2.4,
+     "outsideSpPct": 66.7,
+     "orders90d": 24,
+     "lateRate90dPct": 16.7,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "128639",
+     "state": "PR",
+     "orders": 69,
+     "lateRatePct": 14.5,
+     "postedLatePct": 10.1,
+     "handoverDays": 1.9,
+     "outsideSpPct": 69.6,
+     "orders90d": 189,
+     "lateRate90dPct": 3.2,
+     "postedLate90dPct": 6.3
+    },
+    {
+     "sellerId": "669ae8",
+     "state": "SC",
+     "orders": 21,
+     "lateRatePct": 14.3,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.7,
+     "outsideSpPct": 57.1,
+     "orders90d": 15,
+     "lateRate90dPct": 6.7,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "85d9eb",
+     "state": "MG",
+     "orders": 43,
+     "lateRatePct": 14.0,
+     "postedLatePct": 48.8,
+     "handoverDays": 15.5,
+     "outsideSpPct": 69.8,
+     "orders90d": 82,
+     "lateRate90dPct": 1.2,
+     "postedLate90dPct": 18.3
+    },
+    {
+     "sellerId": "4d6d65",
+     "state": "SP",
+     "orders": 51,
+     "lateRatePct": 13.7,
+     "postedLatePct": 9.8,
+     "handoverDays": 4.6,
+     "outsideSpPct": 68.6,
+     "orders90d": 89,
+     "lateRate90dPct": 4.5,
+     "postedLate90dPct": 24.7
+    },
+    {
+     "sellerId": "4371b6",
+     "state": "SP",
+     "orders": 22,
+     "lateRatePct": 13.6,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.3,
+     "outsideSpPct": 54.5,
+     "orders90d": 24,
+     "lateRate90dPct": 4.2,
+     "postedLate90dPct": 4.2
+    },
+    {
+     "sellerId": "f262cb",
+     "state": "SP",
+     "orders": 37,
+     "lateRatePct": 13.5,
+     "postedLatePct": 2.7,
+     "handoverDays": 1.8,
+     "outsideSpPct": 40.5,
+     "orders90d": 72,
+     "lateRate90dPct": 4.2,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "656021",
+     "state": "SP",
+     "orders": 92,
+     "lateRatePct": 13.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.5,
+     "outsideSpPct": 63.0,
+     "orders90d": 345,
+     "lateRate90dPct": 7.2,
+     "postedLate90dPct": 0.3
+    },
+    {
+     "sellerId": "0b90b6",
+     "state": "PR",
+     "orders": 40,
+     "lateRatePct": 12.5,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.3,
+     "outsideSpPct": 62.5,
+     "orders90d": 67,
+     "lateRate90dPct": 1.5,
+     "postedLate90dPct": 4.5
+    },
+    {
+     "sellerId": "53e4c6",
+     "state": "SP",
+     "orders": 41,
+     "lateRatePct": 12.2,
+     "postedLatePct": 22.0,
+     "handoverDays": 3.9,
+     "outsideSpPct": 51.2,
+     "orders90d": 110,
+     "lateRate90dPct": 7.3,
+     "postedLate90dPct": 13.6
+    },
+    {
+     "sellerId": "a1043b",
+     "state": "MG",
+     "orders": 68,
+     "lateRatePct": 11.8,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.5,
+     "outsideSpPct": 82.4,
+     "orders90d": 234,
+     "lateRate90dPct": 5.6,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "4830e4",
+     "state": "SP",
+     "orders": 31,
+     "lateRatePct": 9.7,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.0,
+     "outsideSpPct": 61.3,
+     "orders90d": 58,
+     "lateRate90dPct": 6.9,
+     "postedLate90dPct": 5.2
+    },
+    {
+     "sellerId": "1c6839",
+     "state": "PR",
+     "orders": 32,
+     "lateRatePct": 9.4,
+     "postedLatePct": 25.0,
+     "handoverDays": 7.0,
+     "outsideSpPct": 46.9,
+     "orders90d": 61,
+     "lateRate90dPct": 3.3,
+     "postedLate90dPct": 1.6
+    },
+    {
+     "sellerId": "de722c",
+     "state": "PE",
+     "orders": 75,
+     "lateRatePct": 9.3,
+     "postedLatePct": 4.0,
+     "handoverDays": 2.4,
+     "outsideSpPct": 66.7,
+     "orders90d": 56,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "f457c4",
+     "state": "PR",
+     "orders": 64,
+     "lateRatePct": 7.8,
+     "postedLatePct": 9.4,
+     "handoverDays": 2.6,
+     "outsideSpPct": 60.9,
+     "orders90d": 70,
+     "lateRate90dPct": 8.6,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "00fc70",
+     "state": "PR",
+     "orders": 54,
+     "lateRatePct": 7.4,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.3,
+     "outsideSpPct": 50.0,
+     "orders90d": 31,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "7c67e1",
+     "state": "SP",
+     "orders": 120,
+     "lateRatePct": 6.7,
+     "postedLatePct": 11.7,
+     "handoverDays": 10.2,
+     "outsideSpPct": 53.3,
+     "orders90d": 173,
+     "lateRate90dPct": 17.3,
+     "postedLate90dPct": 54.3
+    },
+    {
+     "sellerId": "c00320",
+     "state": "SP",
+     "orders": 31,
+     "lateRatePct": 6.5,
+     "postedLatePct": 3.2,
+     "handoverDays": 1.5,
+     "outsideSpPct": 58.1,
+     "orders90d": 45,
+     "lateRate90dPct": 4.4,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "8d956f",
+     "state": "SP",
+     "orders": 31,
+     "lateRatePct": 6.5,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.8,
+     "outsideSpPct": 64.5,
+     "orders90d": 20,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "04308b",
+     "state": "SC",
+     "orders": 33,
+     "lateRatePct": 6.1,
+     "postedLatePct": 27.3,
+     "handoverDays": 3.2,
+     "outsideSpPct": 72.7,
+     "orders90d": 8,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 12.5
+    },
+    {
+     "sellerId": "1da3ae",
+     "state": "SP",
+     "orders": 20,
+     "lateRatePct": 5.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.7,
+     "outsideSpPct": 60.0,
+     "orders90d": 45,
+     "lateRate90dPct": 6.7,
+     "postedLate90dPct": 4.4
+    },
+    {
+     "sellerId": "9f5056",
+     "state": "SP",
+     "orders": 21,
+     "lateRatePct": 4.8,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.1,
+     "outsideSpPct": 57.1,
+     "orders90d": 79,
+     "lateRate90dPct": 5.1,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "bf8405",
+     "state": "SP",
+     "orders": 22,
+     "lateRatePct": 4.5,
+     "postedLatePct": 13.6,
+     "handoverDays": 3.5,
+     "outsideSpPct": 27.3,
+     "orders90d": 0,
+     "lateRate90dPct": null,
+     "postedLate90dPct": null
+    },
+    {
+     "sellerId": "0df398",
+     "state": "MG",
+     "orders": 25,
+     "lateRatePct": 4.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.5,
+     "outsideSpPct": 64.0,
+     "orders90d": 13,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "ceaec5",
+     "state": "SP",
+     "orders": 37,
+     "lateRatePct": 2.7,
+     "postedLatePct": 0.0,
+     "handoverDays": 3.6,
+     "outsideSpPct": 67.6,
+     "orders90d": 15,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 6.7
+    },
+    {
+     "sellerId": "7178f9",
+     "state": "SC",
+     "orders": 24,
+     "lateRatePct": 0.0,
+     "postedLatePct": 8.3,
+     "handoverDays": 4.7,
+     "outsideSpPct": 41.7,
+     "orders90d": 75,
+     "lateRate90dPct": 4.0,
+     "postedLate90dPct": 9.3
+    },
+    {
+     "sellerId": "d91fb3",
+     "state": "SP",
+     "orders": 43,
+     "lateRatePct": 0.0,
+     "postedLatePct": 2.3,
+     "handoverDays": 2.4,
+     "outsideSpPct": 48.8,
+     "orders90d": 41,
+     "lateRate90dPct": 7.3,
+     "postedLate90dPct": 34.1
+    }
+   ]
+  },
+  {
+   "id": "black-friday-2017",
+   "label": "Black Friday 2017",
+   "title": "Black Friday 2017",
+   "start": "2017-11-20",
+   "end": "2017-12-04",
+   "baseStart": "2017-10-01",
+   "baseEnd": "2017-11-13",
+   "overview": {
+    "orders": 4957,
+    "lateOrders": 800,
+    "lateRatePct": 16.1,
+    "baselineLateRatePct": 4.2,
+    "avgDelayLateDays": 11.0,
+    "review": 3.9,
+    "baselineReview": 4.2,
+    "reviewLate": 2.1,
+    "reviewOnTime": 4.2,
+    "sellerLatePct": 14.8,
+    "baselineSellerLatePct": 8.2
+   },
+   "stages": {
+    "period": {
+     "approve": 0.5,
+     "handover": 3.7,
+     "transit": 12.4,
+     "total": 16.5,
+     "promised": 23.3
+    },
+    "baseline": {
+     "approve": 0.4,
+     "handover": 3.1,
+     "transit": 8.6,
+     "total": 12.1,
+     "promised": 23.0
+    }
+   },
+   "causes": [
+    {
+     "component": "transporte",
+     "lateOrders": 675,
+     "sharePct": 84.4
+    },
+    {
+     "component": "postagem_do_vendedor",
+     "lateOrders": 107,
+     "sharePct": 13.4
+    },
+    {
+     "component": "prazo_prometido_curto",
+     "lateOrders": 18,
+     "sharePct": 2.2
+    }
+   ],
+   "timeline": [
+    {
+     "week": "2017-09-25",
+     "label": "25 set",
+     "inPeriod": false,
+     "orders": 124,
+     "lateRatePct": 2.4
+    },
+    {
+     "week": "2017-10-02",
+     "label": "2 out",
+     "inPeriod": false,
+     "orders": 975,
+     "lateRatePct": 2.7
+    },
+    {
+     "week": "2017-10-09",
+     "label": "9 out",
+     "inPeriod": false,
+     "orders": 1030,
+     "lateRatePct": 4.7
+    },
+    {
+     "week": "2017-10-16",
+     "label": "16 out",
+     "inPeriod": false,
+     "orders": 1105,
+     "lateRatePct": 4.5
+    },
+    {
+     "week": "2017-10-23",
+     "label": "23 out",
+     "inPeriod": false,
+     "orders": 950,
+     "lateRatePct": 4.1
+    },
+    {
+     "week": "2017-10-30",
+     "label": "30 out",
+     "inPeriod": false,
+     "orders": 900,
+     "lateRatePct": 4.3
+    },
+    {
+     "week": "2017-11-06",
+     "label": "6 nov",
+     "inPeriod": false,
+     "orders": 1168,
+     "lateRatePct": 5.0
+    },
+    {
+     "week": "2017-11-13",
+     "label": "13 nov",
+     "inPeriod": false,
+     "orders": 1259,
+     "lateRatePct": 8.3
+    },
+    {
+     "week": "2017-11-20",
+     "label": "20 nov",
+     "inPeriod": true,
+     "orders": 2915,
+     "lateRatePct": 17.3
+    },
+    {
+     "week": "2017-11-27",
+     "label": "27 nov",
+     "inPeriod": true,
+     "orders": 2042,
+     "lateRatePct": 14.5
+    }
+   ],
+   "states": [
+    {
+     "state": "SP",
+     "orders": 1941,
+     "lateRatePct": 7.7,
+     "baselineLateRatePct": 3.5,
+     "transitDays": 7.1,
+     "baselineTransitDays": 5.3,
+     "promisedDays": 19.6,
+     "baselinePromisedDays": 18.7,
+     "review": 4.1
+    },
+    {
+     "state": "RJ",
+     "orders": 704,
+     "lateRatePct": 37.5,
+     "baselineLateRatePct": 6.9,
+     "transitDays": 18.1,
+     "baselineTransitDays": 9.8,
+     "promisedDays": 22.9,
+     "baselinePromisedDays": 22.8,
+     "review": 3.3
+    },
+    {
+     "state": "MG",
+     "orders": 682,
+     "lateRatePct": 9.1,
+     "baselineLateRatePct": 0.9,
+     "transitDays": 11.3,
+     "baselineTransitDays": 7.4,
+     "promisedDays": 24.3,
+     "baselinePromisedDays": 23.9,
+     "review": 4.1
+    },
+    {
+     "state": "RS",
+     "orders": 274,
+     "lateRatePct": 17.5,
+     "baselineLateRatePct": 2.3,
+     "transitDays": 16.8,
+     "baselineTransitDays": 10.9,
+     "promisedDays": 29.2,
+     "baselinePromisedDays": 28.5,
+     "review": 3.7
+    },
+    {
+     "state": "PR",
+     "orders": 247,
+     "lateRatePct": 11.3,
+     "baselineLateRatePct": 2.9,
+     "transitDays": 11.9,
+     "baselineTransitDays": 8.9,
+     "promisedDays": 24.6,
+     "baselinePromisedDays": 24.7,
+     "review": 4.1
+    },
+    {
+     "state": "SC",
+     "orders": 188,
+     "lateRatePct": 21.8,
+     "baselineLateRatePct": 4.0,
+     "transitDays": 15.3,
+     "baselineTransitDays": 9.8,
+     "promisedDays": 25.4,
+     "baselinePromisedDays": 25.3,
+     "review": 3.6
+    },
+    {
+     "state": "BA",
+     "orders": 171,
+     "lateRatePct": 21.6,
+     "baselineLateRatePct": 8.1,
+     "transitDays": 19.1,
+     "baselineTransitDays": 14.3,
+     "promisedDays": 28.4,
+     "baselinePromisedDays": 27.4,
+     "review": 3.8
+    },
+    {
+     "state": "ES",
+     "orders": 120,
+     "lateRatePct": 25.0,
+     "baselineLateRatePct": 5.1,
+     "transitDays": 14.8,
+     "baselineTransitDays": 10.0,
+     "promisedDays": 24.2,
+     "baselinePromisedDays": 24.1,
+     "review": 3.7
+    },
+    {
+     "state": "DF",
+     "orders": 113,
+     "lateRatePct": 14.2,
+     "baselineLateRatePct": 2.4,
+     "transitDays": 12.3,
+     "baselineTransitDays": 9.5,
+     "promisedDays": 23.9,
+     "baselinePromisedDays": 22.9,
+     "review": 3.7
+    },
+    {
+     "state": "GO",
+     "orders": 101,
+     "lateRatePct": 16.8,
+     "baselineLateRatePct": 2.2,
+     "transitDays": 15.0,
+     "baselineTransitDays": 11.2,
+     "promisedDays": 26.0,
+     "baselinePromisedDays": 25.4,
+     "review": 3.9
+    },
+    {
+     "state": "PE",
+     "orders": 79,
+     "lateRatePct": 19.0,
+     "baselineLateRatePct": 4.6,
+     "transitDays": 18.3,
+     "baselineTransitDays": 13.3,
+     "promisedDays": 30.8,
+     "baselinePromisedDays": 30.5,
+     "review": 3.7
+    },
+    {
+     "state": "CE",
+     "orders": 63,
+     "lateRatePct": 33.3,
+     "baselineLateRatePct": 7.4,
+     "transitDays": 22.5,
+     "baselineTransitDays": 16.0,
+     "promisedDays": 28.9,
+     "baselinePromisedDays": 29.4,
+     "review": 3.4
+    },
+    {
+     "state": "PA",
+     "orders": 44,
+     "lateRatePct": 18.2,
+     "baselineLateRatePct": 5.1,
+     "transitDays": 23.3,
+     "baselineTransitDays": 20.1,
+     "promisedDays": 37.0,
+     "baselinePromisedDays": 37.0,
+     "review": 3.5
+    },
+    {
+     "state": "MT",
+     "orders": 43,
+     "lateRatePct": 23.3,
+     "baselineLateRatePct": 1.4,
+     "transitDays": 20.6,
+     "baselineTransitDays": 12.8,
+     "promisedDays": 31.6,
+     "baselinePromisedDays": 31.5,
+     "review": 3.7
+    }
+   ],
+   "heatmap": [
+    {
+     "state": "SP",
+     "cells": [
+      0,
+      2.4,
+      4.3,
+      2.7,
+      3.3,
+      3.4,
+      5.1,
+      5.9,
+      9.0,
+      5.9
+     ]
+    },
+    {
+     "state": "RJ",
+     "cells": [
+      16.7,
+      4.4,
+      3.5,
+      7.4,
+      10.3,
+      8.9,
+      6.8,
+      11.4,
+      39.1,
+      35.4
+     ]
+    },
+    {
+     "state": "MG",
+     "cells": [
+      6.2,
+      0.8,
+      0,
+      0,
+      2.4,
+      0,
+      1.5,
+      6.6,
+      9.5,
+      8.5
+     ]
+    },
+    {
+     "state": "RS",
+     "cells": [
+      0,
+      1.9,
+      1.7,
+      3.1,
+      0,
+      2.4,
+      4.3,
+      8.5,
+      16.2,
+      19.6
+     ]
+    },
+    {
+     "state": "PR",
+     "cells": [
+      0,
+      0,
+      0,
+      7.0,
+      2.6,
+      4.3,
+      2.0,
+      6.3,
+      13.2,
+      9.0
+     ]
+    },
+    {
+     "state": "SC",
+     "cells": [
+      0,
+      3.0,
+      4.7,
+      9.1,
+      4.3,
+      0,
+      3.8,
+      2.1,
+      21.5,
+      22.4
+     ]
+    },
+    {
+     "state": "BA",
+     "cells": [
+      0,
+      5.0,
+      20.5,
+      8.3,
+      7.4,
+      0,
+      3.2,
+      11.1,
+      19.3,
+      25.8
+     ]
+    },
+    {
+     "state": "ES",
+     "cells": [
+      0,
+      4.8,
+      0,
+      10.3,
+      0,
+      12.5,
+      3.6,
+      8.0,
+      25.3,
+      24.4
+     ]
+    }
+   ],
+   "sellers": [
+    {
+     "sellerId": "54965b",
+     "state": "PR",
+     "orders": 26,
+     "lateRatePct": 76.9,
+     "postedLatePct": 96.2,
+     "handoverDays": 32.6,
+     "outsideSpPct": 61.5,
+     "orders90d": 19,
+     "lateRate90dPct": 10.5,
+     "postedLate90dPct": 31.6
+    },
+    {
+     "sellerId": "7c67e1",
+     "state": "SP",
+     "orders": 21,
+     "lateRatePct": 47.6,
+     "postedLatePct": 47.6,
+     "handoverDays": 12.2,
+     "outsideSpPct": 71.4,
+     "orders90d": 147,
+     "lateRate90dPct": 15.0,
+     "postedLate90dPct": 28.6
+    },
+    {
+     "sellerId": "1835b5",
+     "state": "SP",
+     "orders": 30,
+     "lateRatePct": 46.7,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.3,
+     "outsideSpPct": 76.7,
+     "orders90d": 69,
+     "lateRate90dPct": 4.3,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "816025",
+     "state": "SP",
+     "orders": 61,
+     "lateRatePct": 41.0,
+     "postedLatePct": 88.5,
+     "handoverDays": 8.9,
+     "outsideSpPct": 65.6,
+     "orders90d": 20,
+     "lateRate90dPct": 5.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "4a3ca9",
+     "state": "SP",
+     "orders": 122,
+     "lateRatePct": 37.7,
+     "postedLatePct": 31.1,
+     "handoverDays": 4.2,
+     "outsideSpPct": 68.9,
+     "orders90d": 307,
+     "lateRate90dPct": 6.8,
+     "postedLate90dPct": 4.9
+    },
+    {
+     "sellerId": "1025f0",
+     "state": "SP",
+     "orders": 72,
+     "lateRatePct": 34.7,
+     "postedLatePct": 77.8,
+     "handoverDays": 10.2,
+     "outsideSpPct": 58.3,
+     "orders90d": 127,
+     "lateRate90dPct": 3.9,
+     "postedLate90dPct": 11.8
+    },
+    {
+     "sellerId": "fe2032",
+     "state": "SP",
+     "orders": 21,
+     "lateRatePct": 33.3,
+     "postedLatePct": 33.3,
+     "handoverDays": 3.0,
+     "outsideSpPct": 66.7,
+     "orders90d": 19,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 5.3
+    },
+    {
+     "sellerId": "4869f7",
+     "state": "SP",
+     "orders": 62,
+     "lateRatePct": 30.6,
+     "postedLatePct": 1.6,
+     "handoverDays": 2.6,
+     "outsideSpPct": 61.3,
+     "orders90d": 183,
+     "lateRate90dPct": 4.9,
+     "postedLate90dPct": 3.8
+    },
+    {
+     "sellerId": "7aa433",
+     "state": "SP",
+     "orders": 33,
+     "lateRatePct": 27.3,
+     "postedLatePct": 78.8,
+     "handoverDays": 7.5,
+     "outsideSpPct": 63.6,
+     "orders90d": 80,
+     "lateRate90dPct": 3.8,
+     "postedLate90dPct": 15.0
+    },
+    {
+     "sellerId": "b33e7c",
+     "state": "SP",
+     "orders": 23,
+     "lateRatePct": 26.1,
+     "postedLatePct": 4.3,
+     "handoverDays": 2.3,
+     "outsideSpPct": 82.6,
+     "orders90d": 30,
+     "lateRate90dPct": 6.7,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "7ddcbb",
+     "state": "SP",
+     "orders": 20,
+     "lateRatePct": 25.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.3,
+     "outsideSpPct": 55.0,
+     "orders90d": 105,
+     "lateRate90dPct": 4.8,
+     "postedLate90dPct": 1.9
+    },
+    {
+     "sellerId": "855668",
+     "state": "SP",
+     "orders": 24,
+     "lateRatePct": 25.0,
+     "postedLatePct": 12.5,
+     "handoverDays": 2.8,
+     "outsideSpPct": 75.0,
+     "orders90d": 95,
+     "lateRate90dPct": 9.5,
+     "postedLate90dPct": 17.9
+    },
+    {
+     "sellerId": "813348",
+     "state": "SP",
+     "orders": 20,
+     "lateRatePct": 25.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.4,
+     "outsideSpPct": 45.0,
+     "orders90d": 35,
+     "lateRate90dPct": 2.9,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "b2ba37",
+     "state": "SP",
+     "orders": 24,
+     "lateRatePct": 25.0,
+     "postedLatePct": 12.5,
+     "handoverDays": 4.9,
+     "outsideSpPct": 50.0,
+     "orders90d": 63,
+     "lateRate90dPct": 4.8,
+     "postedLate90dPct": 28.6
+    },
+    {
+     "sellerId": "858105",
+     "state": "SP",
+     "orders": 26,
+     "lateRatePct": 23.1,
+     "postedLatePct": 3.8,
+     "handoverDays": 3.3,
+     "outsideSpPct": 53.8,
+     "orders90d": 46,
+     "lateRate90dPct": 10.9,
+     "postedLate90dPct": 6.5
+    },
+    {
+     "sellerId": "e5a343",
+     "state": "SP",
+     "orders": 35,
+     "lateRatePct": 22.9,
+     "postedLatePct": 34.3,
+     "handoverDays": 5.1,
+     "outsideSpPct": 51.4,
+     "orders90d": 41,
+     "lateRate90dPct": 9.8,
+     "postedLate90dPct": 17.1
+    },
+    {
+     "sellerId": "53e4c6",
+     "state": "SP",
+     "orders": 22,
+     "lateRatePct": 22.7,
+     "postedLatePct": 9.1,
+     "handoverDays": 3.3,
+     "outsideSpPct": 45.5,
+     "orders90d": 70,
+     "lateRate90dPct": 2.9,
+     "postedLate90dPct": 18.6
+    },
+    {
+     "sellerId": "3d871d",
+     "state": "SP",
+     "orders": 63,
+     "lateRatePct": 22.2,
+     "postedLatePct": 38.1,
+     "handoverDays": 4.8,
+     "outsideSpPct": 68.3,
+     "orders90d": 216,
+     "lateRate90dPct": 2.8,
+     "postedLate90dPct": 10.2
+    },
+    {
+     "sellerId": "7d76b6",
+     "state": "SP",
+     "orders": 20,
+     "lateRatePct": 20.0,
+     "postedLatePct": 55.0,
+     "handoverDays": 5.3,
+     "outsideSpPct": 60.0,
+     "orders90d": 56,
+     "lateRate90dPct": 7.1,
+     "postedLate90dPct": 7.1
+    },
+    {
+     "sellerId": "cca307",
+     "state": "SP",
+     "orders": 35,
+     "lateRatePct": 20.0,
+     "postedLatePct": 25.7,
+     "handoverDays": 4.7,
+     "outsideSpPct": 45.7,
+     "orders90d": 145,
+     "lateRate90dPct": 2.8,
+     "postedLate90dPct": 3.4
+    },
+    {
+     "sellerId": "375156",
+     "state": "SP",
+     "orders": 36,
+     "lateRatePct": 19.4,
+     "postedLatePct": 55.6,
+     "handoverDays": 5.7,
+     "outsideSpPct": 50.0,
+     "orders90d": 80,
+     "lateRate90dPct": 3.8,
+     "postedLate90dPct": 48.8
+    },
+    {
+     "sellerId": "391fc6",
+     "state": "SP",
+     "orders": 44,
+     "lateRatePct": 18.2,
+     "postedLatePct": 4.5,
+     "handoverDays": 3.3,
+     "outsideSpPct": 70.5,
+     "orders90d": 59,
+     "lateRate90dPct": 6.8,
+     "postedLate90dPct": 8.5
+    },
+    {
+     "sellerId": "fa1c13",
+     "state": "SP",
+     "orders": 34,
+     "lateRatePct": 17.6,
+     "postedLatePct": 5.9,
+     "handoverDays": 3.1,
+     "outsideSpPct": 76.5,
+     "orders90d": 87,
+     "lateRate90dPct": 3.4,
+     "postedLate90dPct": 9.2
+    },
+    {
+     "sellerId": "ea8482",
+     "state": "SP",
+     "orders": 91,
+     "lateRatePct": 17.6,
+     "postedLatePct": 8.8,
+     "handoverDays": 3.3,
+     "outsideSpPct": 65.9,
+     "orders90d": 113,
+     "lateRate90dPct": 3.5,
+     "postedLate90dPct": 9.7
+    },
+    {
+     "sellerId": "8b321b",
+     "state": "SP",
+     "orders": 57,
+     "lateRatePct": 17.5,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.5,
+     "outsideSpPct": 66.7,
+     "orders90d": 20,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "17e34d",
+     "state": "SP",
+     "orders": 29,
+     "lateRatePct": 17.2,
+     "postedLatePct": 13.8,
+     "handoverDays": 2.5,
+     "outsideSpPct": 51.7,
+     "orders90d": 46,
+     "lateRate90dPct": 4.3,
+     "postedLate90dPct": 6.5
+    },
+    {
+     "sellerId": "da8622",
+     "state": "SP",
+     "orders": 88,
+     "lateRatePct": 17.0,
+     "postedLatePct": 9.1,
+     "handoverDays": 3.1,
+     "outsideSpPct": 50.0,
+     "orders90d": 143,
+     "lateRate90dPct": 3.5,
+     "postedLate90dPct": 4.2
+    },
+    {
+     "sellerId": "1f50f9",
+     "state": "SP",
+     "orders": 208,
+     "lateRatePct": 15.9,
+     "postedLatePct": 0.0,
+     "handoverDays": 3.3,
+     "outsideSpPct": 72.6,
+     "orders90d": 291,
+     "lateRate90dPct": 7.2,
+     "postedLate90dPct": 6.5
+    },
+    {
+     "sellerId": "46dc3b",
+     "state": "RJ",
+     "orders": 91,
+     "lateRatePct": 15.4,
+     "postedLatePct": 24.2,
+     "handoverDays": 4.5,
+     "outsideSpPct": 64.8,
+     "orders90d": 162,
+     "lateRate90dPct": 3.7,
+     "postedLate90dPct": 3.7
+    },
+    {
+     "sellerId": "de23c3",
+     "state": "SP",
+     "orders": 21,
+     "lateRatePct": 14.3,
+     "postedLatePct": 4.8,
+     "handoverDays": 2.5,
+     "outsideSpPct": 42.9,
+     "orders90d": 29,
+     "lateRate90dPct": 3.4,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "656021",
+     "state": "SP",
+     "orders": 76,
+     "lateRatePct": 13.2,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.5,
+     "outsideSpPct": 52.6,
+     "orders90d": 323,
+     "lateRate90dPct": 3.7,
+     "postedLate90dPct": 0.6
+    },
+    {
+     "sellerId": "714254",
+     "state": "SP",
+     "orders": 23,
+     "lateRatePct": 13.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 3.2,
+     "outsideSpPct": 69.6,
+     "orders90d": 45,
+     "lateRate90dPct": 4.4,
+     "postedLate90dPct": 15.6
+    },
+    {
+     "sellerId": "7040e8",
+     "state": "SP",
+     "orders": 23,
+     "lateRatePct": 13.0,
+     "postedLatePct": 8.7,
+     "handoverDays": 2.0,
+     "outsideSpPct": 56.5,
+     "orders90d": 46,
+     "lateRate90dPct": 4.3,
+     "postedLate90dPct": 6.5
+    },
+    {
+     "sellerId": "cc419e",
+     "state": "SP",
+     "orders": 173,
+     "lateRatePct": 12.1,
+     "postedLatePct": 0.0,
+     "handoverDays": 3.1,
+     "outsideSpPct": 63.6,
+     "orders90d": 354,
+     "lateRate90dPct": 2.8,
+     "postedLate90dPct": 0.3
+    },
+    {
+     "sellerId": "897060",
+     "state": "SP",
+     "orders": 34,
+     "lateRatePct": 11.8,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.2,
+     "outsideSpPct": 52.9,
+     "orders90d": 59,
+     "lateRate90dPct": 5.1,
+     "postedLate90dPct": 1.7
+    },
+    {
+     "sellerId": "95e03c",
+     "state": "RJ",
+     "orders": 35,
+     "lateRatePct": 11.4,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.1,
+     "outsideSpPct": 57.1,
+     "orders90d": 29,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "f8db35",
+     "state": "SP",
+     "orders": 21,
+     "lateRatePct": 9.5,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.3,
+     "outsideSpPct": 57.1,
+     "orders90d": 71,
+     "lateRate90dPct": 2.8,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "7a67c8",
+     "state": "SP",
+     "orders": 34,
+     "lateRatePct": 8.8,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.7,
+     "outsideSpPct": 47.1,
+     "orders90d": 183,
+     "lateRate90dPct": 2.7,
+     "postedLate90dPct": 1.1
+    },
+    {
+     "sellerId": "620c87",
+     "state": "RJ",
+     "orders": 37,
+     "lateRatePct": 8.1,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.8,
+     "outsideSpPct": 75.7,
+     "orders90d": 61,
+     "lateRate90dPct": 1.6,
+     "postedLate90dPct": 1.6
+    },
+    {
+     "sellerId": "c826c4",
+     "state": "SP",
+     "orders": 25,
+     "lateRatePct": 8.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.1,
+     "outsideSpPct": 52.0,
+     "orders90d": 20,
+     "lateRate90dPct": 5.0,
+     "postedLate90dPct": 15.0
+    },
+    {
+     "sellerId": "7178f9",
+     "state": "SC",
+     "orders": 25,
+     "lateRatePct": 8.0,
+     "postedLatePct": 8.0,
+     "handoverDays": 4.6,
+     "outsideSpPct": 76.0,
+     "orders90d": 47,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 2.1
+    },
+    {
+     "sellerId": "128639",
+     "state": "PR",
+     "orders": 25,
+     "lateRatePct": 8.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.4,
+     "outsideSpPct": 84.0,
+     "orders90d": 77,
+     "lateRate90dPct": 2.6,
+     "postedLate90dPct": 10.4
+    },
+    {
+     "sellerId": "955fee",
+     "state": "SP",
+     "orders": 32,
+     "lateRatePct": 6.2,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.5,
+     "outsideSpPct": 59.4,
+     "orders90d": 76,
+     "lateRate90dPct": 3.9,
+     "postedLate90dPct": 2.6
+    },
+    {
+     "sellerId": "4e9229",
+     "state": "SP",
+     "orders": 23,
+     "lateRatePct": 4.3,
+     "postedLatePct": 17.4,
+     "handoverDays": 4.5,
+     "outsideSpPct": 52.2,
+     "orders90d": 56,
+     "lateRate90dPct": 8.9,
+     "postedLate90dPct": 12.5
+    },
+    {
+     "sellerId": "85d9eb",
+     "state": "MG",
+     "orders": 28,
+     "lateRatePct": 3.6,
+     "postedLatePct": 46.4,
+     "handoverDays": 13.1,
+     "outsideSpPct": 71.4,
+     "orders90d": 63,
+     "lateRate90dPct": 1.6,
+     "postedLate90dPct": 12.7
+    },
+    {
+     "sellerId": "850f4f",
+     "state": "SP",
+     "orders": 31,
+     "lateRatePct": 3.2,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.2,
+     "outsideSpPct": 32.3,
+     "orders90d": 31,
+     "lateRate90dPct": 9.7,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "532435",
+     "state": "BA",
+     "orders": 33,
+     "lateRatePct": 3.0,
+     "postedLatePct": 12.1,
+     "handoverDays": 3.4,
+     "outsideSpPct": 75.8,
+     "orders90d": 177,
+     "lateRate90dPct": 2.8,
+     "postedLate90dPct": 3.4
+    },
+    {
+     "sellerId": "1c6839",
+     "state": "PR",
+     "orders": 22,
+     "lateRatePct": 0.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.7,
+     "outsideSpPct": 54.5,
+     "orders90d": 13,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "7299e2",
+     "state": "MG",
+     "orders": 25,
+     "lateRatePct": 0.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.6,
+     "outsideSpPct": 60.0,
+     "orders90d": 62,
+     "lateRate90dPct": 3.2,
+     "postedLate90dPct": 1.6
+    },
+    {
+     "sellerId": "a1043b",
+     "state": "MG",
+     "orders": 47,
+     "lateRatePct": 0.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.0,
+     "outsideSpPct": 85.1,
+     "orders90d": 101,
+     "lateRate90dPct": 1.0,
+     "postedLate90dPct": 0.0
+    }
+   ]
+  },
+  {
+   "id": "abril-2018",
+   "label": "Abril 2018",
+   "title": "Abril de 2018",
+   "start": "2018-04-09",
+   "end": "2018-05-07",
+   "baseStart": "2018-03-26",
+   "baseEnd": "2018-04-09",
+   "overview": {
+    "orders": 6142,
+    "lateOrders": 236,
+    "lateRatePct": 3.8,
+    "baselineLateRatePct": 8.9,
+    "avgDelayLateDays": 10.4,
+    "review": 4.2,
+    "baselineReview": 4.1,
+    "reviewLate": 2.3,
+    "reviewOnTime": 4.3,
+    "sellerLatePct": 6.3,
+    "baselineSellerLatePct": 7.1
+   },
+   "stages": {
+    "period": {
+     "approve": 0.5,
+     "handover": 2.4,
+     "transit": 8.5,
+     "total": 11.3,
+     "promised": 24.1
+    },
+    "baseline": {
+     "approve": 0.4,
+     "handover": 2.7,
+     "transit": 9.8,
+     "total": 12.9,
+     "promised": 21.6
+    }
+   },
+   "causes": [
+    {
+     "component": "transporte",
+     "lateOrders": 181,
+     "sharePct": 76.7
+    },
+    {
+     "component": "postagem_do_vendedor",
+     "lateOrders": 32,
+     "sharePct": 13.6
+    },
+    {
+     "component": "prazo_prometido_curto",
+     "lateOrders": 22,
+     "sharePct": 9.3
+    },
+    {
+     "component": "aprovacao_do_pagamento",
+     "lateOrders": 1,
+     "sharePct": 0.4
+    }
+   ],
+   "timeline": [
+    {
+     "week": "2018-03-26",
+     "label": "26 mar",
+     "inPeriod": false,
+     "orders": 1431,
+     "lateRatePct": 11.1
+    },
+    {
+     "week": "2018-04-02",
+     "label": "2 abr",
+     "inPeriod": false,
+     "orders": 1555,
+     "lateRatePct": 6.9
+    },
+    {
+     "week": "2018-04-09",
+     "label": "9 abr",
+     "inPeriod": true,
+     "orders": 1522,
+     "lateRatePct": 3.5
+    },
+    {
+     "week": "2018-04-16",
+     "label": "16 abr",
+     "inPeriod": true,
+     "orders": 1327,
+     "lateRatePct": 4.3
+    },
+    {
+     "week": "2018-04-23",
+     "label": "23 abr",
+     "inPeriod": true,
+     "orders": 1572,
+     "lateRatePct": 3.9
+    },
+    {
+     "week": "2018-04-30",
+     "label": "30 abr",
+     "inPeriod": true,
+     "orders": 1721,
+     "lateRatePct": 3.7
+    }
+   ],
+   "states": [
+    {
+     "state": "SP",
+     "orders": 2657,
+     "lateRatePct": 1.6,
+     "baselineLateRatePct": 3.8,
+     "transitDays": 4.4,
+     "baselineTransitDays": 5.1,
+     "promisedDays": 19.2,
+     "baselinePromisedDays": 17.1,
+     "review": 4.3
+    },
+    {
+     "state": "RJ",
+     "orders": 757,
+     "lateRatePct": 4.0,
+     "baselineLateRatePct": 13.1,
+     "transitDays": 10.8,
+     "baselineTransitDays": 13.9,
+     "promisedDays": 31.1,
+     "baselinePromisedDays": 28.4,
+     "review": 4.2
+    },
+    {
+     "state": "MG",
+     "orders": 714,
+     "lateRatePct": 1.4,
+     "baselineLateRatePct": 7.0,
+     "transitDays": 8.2,
+     "baselineTransitDays": 9.5,
+     "promisedDays": 24.5,
+     "baselinePromisedDays": 22.6,
+     "review": 4.3
+    },
+    {
+     "state": "RS",
+     "orders": 327,
+     "lateRatePct": 4.0,
+     "baselineLateRatePct": 6.4,
+     "transitDays": 10.2,
+     "baselineTransitDays": 12.9,
+     "promisedDays": 29.2,
+     "baselinePromisedDays": 27.0,
+     "review": 4.2
+    },
+    {
+     "state": "PR",
+     "orders": 324,
+     "lateRatePct": 1.5,
+     "baselineLateRatePct": 0.6,
+     "transitDays": 7.3,
+     "baselineTransitDays": 8.3,
+     "promisedDays": 24.8,
+     "baselinePromisedDays": 22.6,
+     "review": 4.3
+    },
+    {
+     "state": "SC",
+     "orders": 226,
+     "lateRatePct": 1.8,
+     "baselineLateRatePct": 5.6,
+     "transitDays": 8.9,
+     "baselineTransitDays": 10.2,
+     "promisedDays": 26.0,
+     "baselinePromisedDays": 23.9,
+     "review": 4.4
+    },
+    {
+     "state": "BA",
+     "orders": 213,
+     "lateRatePct": 18.8,
+     "baselineLateRatePct": 24.8,
+     "transitDays": 19.9,
+     "baselineTransitDays": 18.3,
+     "promisedDays": 27.6,
+     "baselinePromisedDays": 25.7,
+     "review": 3.9
+    },
+    {
+     "state": "GO",
+     "orders": 134,
+     "lateRatePct": 3.0,
+     "baselineLateRatePct": 11.1,
+     "transitDays": 11.1,
+     "baselineTransitDays": 15.0,
+     "promisedDays": 26.1,
+     "baselinePromisedDays": 24.2,
+     "review": 4.1
+    },
+    {
+     "state": "DF",
+     "orders": 128,
+     "lateRatePct": 3.1,
+     "baselineLateRatePct": 6.5,
+     "transitDays": 8.3,
+     "baselineTransitDays": 10.2,
+     "promisedDays": 23.7,
+     "baselinePromisedDays": 21.1,
+     "review": 4.3
+    },
+    {
+     "state": "ES",
+     "orders": 119,
+     "lateRatePct": 10.9,
+     "baselineLateRatePct": 27.0,
+     "transitDays": 12.9,
+     "baselineTransitDays": 16.2,
+     "promisedDays": 25.0,
+     "baselinePromisedDays": 21.4,
+     "review": 4.1
+    },
+    {
+     "state": "PE",
+     "orders": 97,
+     "lateRatePct": 10.3,
+     "baselineLateRatePct": 27.3,
+     "transitDays": 16.9,
+     "baselineTransitDays": 18.2,
+     "promisedDays": 29.4,
+     "baselinePromisedDays": 26.3,
+     "review": 3.8
+    },
+    {
+     "state": "CE",
+     "orders": 82,
+     "lateRatePct": 18.3,
+     "baselineLateRatePct": 41.3,
+     "transitDays": 20.1,
+     "baselineTransitDays": 25.1,
+     "promisedDays": 29.6,
+     "baselinePromisedDays": 26.8,
+     "review": 4.0
+    },
+    {
+     "state": "MT",
+     "orders": 68,
+     "lateRatePct": 1.5,
+     "baselineLateRatePct": 0.0,
+     "transitDays": 14.4,
+     "baselineTransitDays": 14.6,
+     "promisedDays": 30.5,
+     "baselinePromisedDays": 29.5,
+     "review": 4.4
+    },
+    {
+     "state": "PA",
+     "orders": 54,
+     "lateRatePct": 25.9,
+     "baselineLateRatePct": 33.3,
+     "transitDays": 29.1,
+     "baselineTransitDays": 28.0,
+     "promisedDays": 37.8,
+     "baselinePromisedDays": 35.0,
+     "review": 3.4
+    },
+    {
+     "state": "MS",
+     "orders": 42,
+     "lateRatePct": 2.4,
+     "baselineLateRatePct": 27.3,
+     "transitDays": 11.0,
+     "baselineTransitDays": 18.7,
+     "promisedDays": 25.7,
+     "baselinePromisedDays": 22.8,
+     "review": 4.2
+    }
+   ],
+   "heatmap": [
+    {
+     "state": "SP",
+     "cells": [
+      4.9,
+      2.7,
+      1.2,
+      1.1,
+      2.1,
+      2.0
+     ]
+    },
+    {
+     "state": "RJ",
+     "cells": [
+      18.2,
+      7.8,
+      4.1,
+      2.2,
+      4.7,
+      4.7
+     ]
+    },
+    {
+     "state": "MG",
+     "cells": [
+      8.3,
+      5.7,
+      2.1,
+      0.6,
+      1.1,
+      1.6
+     ]
+    },
+    {
+     "state": "RS",
+     "cells": [
+      8.5,
+      4.1,
+      2.3,
+      6.8,
+      1.5,
+      4.9
+     ]
+    },
+    {
+     "state": "PR",
+     "cells": [
+      1.2,
+      0,
+      6.2,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "state": "SC",
+     "cells": [
+      6.7,
+      4.4,
+      0,
+      2.0,
+      3.1,
+      1.8
+     ]
+    },
+    {
+     "state": "BA",
+     "cells": [
+      27.7,
+      22.2,
+      8.7,
+      26.5,
+      18.9,
+      21.2
+     ]
+    },
+    {
+     "state": "GO",
+     "cells": [
+      15.4,
+      7.1,
+      4.3,
+      2.9,
+      7.1,
+      0
+     ]
+    }
+   ],
+   "sellers": [
+    {
+     "sellerId": "2eb702",
+     "state": "SP",
+     "orders": 23,
+     "lateRatePct": 30.4,
+     "postedLatePct": 56.5,
+     "handoverDays": 13.6,
+     "outsideSpPct": 60.9,
+     "orders90d": 13,
+     "lateRate90dPct": 46.2,
+     "postedLate90dPct": 46.2
+    },
+    {
+     "sellerId": "06a2c3",
+     "state": "MA",
+     "orders": 63,
+     "lateRatePct": 14.3,
+     "postedLatePct": 30.2,
+     "handoverDays": 4.4,
+     "outsideSpPct": 74.6,
+     "orders90d": 61,
+     "lateRate90dPct": 31.1,
+     "postedLate90dPct": 39.3
+    },
+    {
+     "sellerId": "53e4c6",
+     "state": "SP",
+     "orders": 24,
+     "lateRatePct": 8.3,
+     "postedLatePct": 37.5,
+     "handoverDays": 4.8,
+     "outsideSpPct": 41.7,
+     "orders90d": 106,
+     "lateRate90dPct": 7.5,
+     "postedLate90dPct": 28.3
+    },
+    {
+     "sellerId": "c31eff",
+     "state": "SP",
+     "orders": 25,
+     "lateRatePct": 8.0,
+     "postedLatePct": 16.0,
+     "handoverDays": 3.6,
+     "outsideSpPct": 40.0,
+     "orders90d": 26,
+     "lateRate90dPct": 3.8,
+     "postedLate90dPct": 34.6
+    },
+    {
+     "sellerId": "190026",
+     "state": "SP",
+     "orders": 28,
+     "lateRatePct": 7.1,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.4,
+     "outsideSpPct": 46.4,
+     "orders90d": 106,
+     "lateRate90dPct": 15.1,
+     "postedLate90dPct": 0.9
+    },
+    {
+     "sellerId": "7c67e1",
+     "state": "SP",
+     "orders": 58,
+     "lateRatePct": 6.9,
+     "postedLatePct": 12.1,
+     "handoverDays": 11.2,
+     "outsideSpPct": 56.9,
+     "orders90d": 272,
+     "lateRate90dPct": 8.1,
+     "postedLate90dPct": 39.7
+    },
+    {
+     "sellerId": "d91fb3",
+     "state": "SP",
+     "orders": 58,
+     "lateRatePct": 6.9,
+     "postedLatePct": 20.7,
+     "handoverDays": 2.9,
+     "outsideSpPct": 50.0,
+     "orders90d": 108,
+     "lateRate90dPct": 2.8,
+     "postedLate90dPct": 13.0
+    },
+    {
+     "sellerId": "391fc6",
+     "state": "SP",
+     "orders": 31,
+     "lateRatePct": 6.5,
+     "postedLatePct": 3.2,
+     "handoverDays": 2.9,
+     "outsideSpPct": 41.9,
+     "orders90d": 104,
+     "lateRate90dPct": 15.4,
+     "postedLate90dPct": 4.8
+    },
+    {
+     "sellerId": "634964",
+     "state": "RJ",
+     "orders": 31,
+     "lateRatePct": 6.5,
+     "postedLatePct": 12.9,
+     "handoverDays": 3.3,
+     "outsideSpPct": 58.1,
+     "orders90d": 104,
+     "lateRate90dPct": 13.5,
+     "postedLate90dPct": 7.7
+    },
+    {
+     "sellerId": "e97799",
+     "state": "SP",
+     "orders": 32,
+     "lateRatePct": 6.2,
+     "postedLatePct": 3.1,
+     "handoverDays": 2.0,
+     "outsideSpPct": 43.8,
+     "orders90d": 150,
+     "lateRate90dPct": 14.0,
+     "postedLate90dPct": 12.0
+    },
+    {
+     "sellerId": "a1043b",
+     "state": "MG",
+     "orders": 60,
+     "lateRatePct": 5.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.4,
+     "outsideSpPct": 88.3,
+     "orders90d": 201,
+     "lateRate90dPct": 7.5,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "4a3ca9",
+     "state": "SP",
+     "orders": 60,
+     "lateRatePct": 5.0,
+     "postedLatePct": 3.3,
+     "handoverDays": 1.6,
+     "outsideSpPct": 58.3,
+     "orders90d": 303,
+     "lateRate90dPct": 21.5,
+     "postedLate90dPct": 8.6
+    },
+    {
+     "sellerId": "e9bc59",
+     "state": "PR",
+     "orders": 21,
+     "lateRatePct": 4.8,
+     "postedLatePct": 52.4,
+     "handoverDays": 5.3,
+     "outsideSpPct": 52.4,
+     "orders90d": 23,
+     "lateRate90dPct": 21.7,
+     "postedLate90dPct": 60.9
+    },
+    {
+     "sellerId": "8b321b",
+     "state": "SP",
+     "orders": 87,
+     "lateRatePct": 4.6,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.6,
+     "outsideSpPct": 58.6,
+     "orders90d": 464,
+     "lateRate90dPct": 13.1,
+     "postedLate90dPct": 7.1
+    },
+    {
+     "sellerId": "0dd184",
+     "state": "SP",
+     "orders": 24,
+     "lateRatePct": 4.2,
+     "postedLatePct": 8.3,
+     "handoverDays": 2.7,
+     "outsideSpPct": 54.2,
+     "orders90d": 81,
+     "lateRate90dPct": 18.5,
+     "postedLate90dPct": 16.0
+    },
+    {
+     "sellerId": "4830e4",
+     "state": "SP",
+     "orders": 24,
+     "lateRatePct": 4.2,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.7,
+     "outsideSpPct": 58.3,
+     "orders90d": 78,
+     "lateRate90dPct": 6.4,
+     "postedLate90dPct": 1.3
+    },
+    {
+     "sellerId": "7d13fc",
+     "state": "SP",
+     "orders": 163,
+     "lateRatePct": 3.7,
+     "postedLatePct": 12.3,
+     "handoverDays": 3.8,
+     "outsideSpPct": 68.1,
+     "orders90d": 139,
+     "lateRate90dPct": 25.9,
+     "postedLate90dPct": 14.4
+    },
+    {
+     "sellerId": "1f50f9",
+     "state": "SP",
+     "orders": 109,
+     "lateRatePct": 3.7,
+     "postedLatePct": 0.9,
+     "handoverDays": 1.9,
+     "outsideSpPct": 71.6,
+     "orders90d": 319,
+     "lateRate90dPct": 14.7,
+     "postedLate90dPct": 21.9
+    },
+    {
+     "sellerId": "d6b1ce",
+     "state": "SP",
+     "orders": 28,
+     "lateRatePct": 3.6,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.3,
+     "outsideSpPct": 67.9,
+     "orders90d": 3,
+     "lateRate90dPct": 33.3,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "1025f0",
+     "state": "SP",
+     "orders": 92,
+     "lateRatePct": 3.3,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.6,
+     "outsideSpPct": 68.5,
+     "orders90d": 164,
+     "lateRate90dPct": 15.2,
+     "postedLate90dPct": 12.2
+    },
+    {
+     "sellerId": "88460e",
+     "state": "PR",
+     "orders": 31,
+     "lateRatePct": 3.2,
+     "postedLatePct": 16.1,
+     "handoverDays": 3.2,
+     "outsideSpPct": 58.1,
+     "orders90d": 100,
+     "lateRate90dPct": 35.0,
+     "postedLate90dPct": 80.0
+    },
+    {
+     "sellerId": "4869f7",
+     "state": "SP",
+     "orders": 124,
+     "lateRatePct": 3.2,
+     "postedLatePct": 6.5,
+     "handoverDays": 3.0,
+     "outsideSpPct": 58.9,
+     "orders90d": 287,
+     "lateRate90dPct": 24.0,
+     "postedLate90dPct": 0.7
+    },
+    {
+     "sellerId": "128639",
+     "state": "PR",
+     "orders": 36,
+     "lateRatePct": 2.8,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.4,
+     "outsideSpPct": 63.9,
+     "orders90d": 175,
+     "lateRate90dPct": 9.1,
+     "postedLate90dPct": 9.1
+    },
+    {
+     "sellerId": "cc419e",
+     "state": "SP",
+     "orders": 36,
+     "lateRatePct": 2.8,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.4,
+     "outsideSpPct": 52.8,
+     "orders90d": 283,
+     "lateRate90dPct": 10.6,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "c70c1b",
+     "state": "SP",
+     "orders": 38,
+     "lateRatePct": 2.6,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.2,
+     "outsideSpPct": 42.1,
+     "orders90d": 1,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "ceaec5",
+     "state": "SP",
+     "orders": 41,
+     "lateRatePct": 2.4,
+     "postedLatePct": 0.0,
+     "handoverDays": 2.1,
+     "outsideSpPct": 63.4,
+     "orders90d": 72,
+     "lateRate90dPct": 2.8,
+     "postedLate90dPct": 1.4
+    },
+    {
+     "sellerId": "7a67c8",
+     "state": "SP",
+     "orders": 41,
+     "lateRatePct": 2.4,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.2,
+     "outsideSpPct": 75.6,
+     "orders90d": 192,
+     "lateRate90dPct": 13.0,
+     "postedLate90dPct": 4.2
+    },
+    {
+     "sellerId": "562fc2",
+     "state": "SP",
+     "orders": 43,
+     "lateRatePct": 2.3,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.2,
+     "outsideSpPct": 72.1,
+     "orders90d": 98,
+     "lateRate90dPct": 7.1,
+     "postedLate90dPct": 2.0
+    },
+    {
+     "sellerId": "955fee",
+     "state": "SP",
+     "orders": 188,
+     "lateRatePct": 2.1,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.3,
+     "outsideSpPct": 56.9,
+     "orders90d": 451,
+     "lateRate90dPct": 10.4,
+     "postedLate90dPct": 0.2
+    },
+    {
+     "sellerId": "da8622",
+     "state": "SP",
+     "orders": 99,
+     "lateRatePct": 2.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.8,
+     "outsideSpPct": 41.4,
+     "orders90d": 354,
+     "lateRate90dPct": 10.7,
+     "postedLate90dPct": 1.7
+    },
+    {
+     "sellerId": "ea8482",
+     "state": "SP",
+     "orders": 73,
+     "lateRatePct": 1.4,
+     "postedLatePct": 1.4,
+     "handoverDays": 1.6,
+     "outsideSpPct": 65.8,
+     "orders90d": 447,
+     "lateRate90dPct": 13.6,
+     "postedLate90dPct": 7.4
+    },
+    {
+     "sellerId": "656021",
+     "state": "SP",
+     "orders": 93,
+     "lateRatePct": 1.1,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.1,
+     "outsideSpPct": 62.4,
+     "orders90d": 246,
+     "lateRate90dPct": 10.2,
+     "postedLate90dPct": 0.4
+    },
+    {
+     "sellerId": "4d6d65",
+     "state": "SP",
+     "orders": 29,
+     "lateRatePct": 0.0,
+     "postedLatePct": 20.7,
+     "handoverDays": 3.7,
+     "outsideSpPct": 69.0,
+     "orders90d": 125,
+     "lateRate90dPct": 6.4,
+     "postedLate90dPct": 14.4
+    },
+    {
+     "sellerId": "3d871d",
+     "state": "SP",
+     "orders": 44,
+     "lateRatePct": 0.0,
+     "postedLatePct": 4.5,
+     "handoverDays": 2.4,
+     "outsideSpPct": 50.0,
+     "orders90d": 218,
+     "lateRate90dPct": 9.2,
+     "postedLate90dPct": 22.0
+    },
+    {
+     "sellerId": "1835b5",
+     "state": "SP",
+     "orders": 24,
+     "lateRatePct": 0.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.2,
+     "outsideSpPct": 50.0,
+     "orders90d": 123,
+     "lateRate90dPct": 17.1,
+     "postedLate90dPct": 4.1
+    },
+    {
+     "sellerId": "16090f",
+     "state": "SP",
+     "orders": 48,
+     "lateRatePct": 0.0,
+     "postedLatePct": 4.2,
+     "handoverDays": 1.4,
+     "outsideSpPct": 37.5,
+     "orders90d": 83,
+     "lateRate90dPct": 15.7,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "77530e",
+     "state": "PR",
+     "orders": 27,
+     "lateRatePct": 0.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.3,
+     "outsideSpPct": 51.9,
+     "orders90d": 83,
+     "lateRate90dPct": 10.8,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "620c87",
+     "state": "RJ",
+     "orders": 20,
+     "lateRatePct": 0.0,
+     "postedLatePct": 5.0,
+     "handoverDays": 1.6,
+     "outsideSpPct": 55.0,
+     "orders90d": 181,
+     "lateRate90dPct": 22.7,
+     "postedLate90dPct": 3.3
+    },
+    {
+     "sellerId": "816025",
+     "state": "SP",
+     "orders": 23,
+     "lateRatePct": 0.0,
+     "postedLatePct": 4.3,
+     "handoverDays": 2.3,
+     "outsideSpPct": 52.2,
+     "orders90d": 126,
+     "lateRate90dPct": 18.3,
+     "postedLate90dPct": 9.5
+    },
+    {
+     "sellerId": "688756",
+     "state": "SP",
+     "orders": 23,
+     "lateRatePct": 0.0,
+     "postedLatePct": 13.0,
+     "handoverDays": 4.0,
+     "outsideSpPct": 47.8,
+     "orders90d": 0,
+     "lateRate90dPct": null,
+     "postedLate90dPct": null
+    },
+    {
+     "sellerId": "9f5056",
+     "state": "SP",
+     "orders": 28,
+     "lateRatePct": 0.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 0.9,
+     "outsideSpPct": 32.1,
+     "orders90d": 81,
+     "lateRate90dPct": 3.7,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "9b013e",
+     "state": "SP",
+     "orders": 25,
+     "lateRatePct": 0.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.7,
+     "outsideSpPct": 16.0,
+     "orders90d": 34,
+     "lateRate90dPct": 2.9,
+     "postedLate90dPct": 5.9
+    },
+    {
+     "sellerId": "d566c3",
+     "state": "SP",
+     "orders": 21,
+     "lateRatePct": 0.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 0.8,
+     "outsideSpPct": 33.3,
+     "orders90d": 4,
+     "lateRate90dPct": 0.0,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "b2479f",
+     "state": "SP",
+     "orders": 21,
+     "lateRatePct": 0.0,
+     "postedLatePct": 4.8,
+     "handoverDays": 2.3,
+     "outsideSpPct": 47.6,
+     "orders90d": 53,
+     "lateRate90dPct": 22.6,
+     "postedLate90dPct": 20.8
+    },
+    {
+     "sellerId": "de722c",
+     "state": "PE",
+     "orders": 34,
+     "lateRatePct": 0.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.1,
+     "outsideSpPct": 76.5,
+     "orders90d": 159,
+     "lateRate90dPct": 5.0,
+     "postedLate90dPct": 1.9
+    },
+    {
+     "sellerId": "dbc221",
+     "state": "MG",
+     "orders": 22,
+     "lateRatePct": 0.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 0.8,
+     "outsideSpPct": 86.4,
+     "orders90d": 38,
+     "lateRate90dPct": 2.6,
+     "postedLate90dPct": 2.6
+    },
+    {
+     "sellerId": "f8db35",
+     "state": "SP",
+     "orders": 38,
+     "lateRatePct": 0.0,
+     "postedLatePct": 0.0,
+     "handoverDays": 1.2,
+     "outsideSpPct": 50.0,
+     "orders90d": 72,
+     "lateRate90dPct": 12.5,
+     "postedLate90dPct": 0.0
+    },
+    {
+     "sellerId": "fa1c13",
+     "state": "SP",
+     "orders": 24,
+     "lateRatePct": 0.0,
+     "postedLatePct": 4.2,
+     "handoverDays": 2.3,
+     "outsideSpPct": 54.2,
+     "orders90d": 123,
+     "lateRate90dPct": 22.8,
+     "postedLate90dPct": 7.3
+    }
+   ]
+  }
+ ]
+}

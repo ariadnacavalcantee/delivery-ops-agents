@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Delivery Ops Agents",
-  description: "Central de operações de delivery com 5 agentes de IA que detectam, explicam e propõem ações para atrasos.",
+  description: "5 agentes de IA analisam atrasos reais de entrega de um marketplace brasileiro (base pública da Olist), explicam as causas e propõem um plano de ação.",
 };
 
 // Aplica o tema antes da pintura para não piscar.

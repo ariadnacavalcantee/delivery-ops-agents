@@ -1,39 +1,46 @@
 # Delivery Ops Agents
 
-Central de operações de delivery em que cinco agentes de IA leem a operação de um pico de jantar, descobrem por que os pedidos estão atrasando e entregam um plano de ação para o gestor.
+Cinco agentes de IA analisam **atrasos reais de entrega** de um marketplace brasileiro, descobrem em que etapa o atraso nasceu e entregam um plano de ação para a gestora de operações.
 
-Os dados são fictícios e gerados de forma determinística: sexta-feira, 19h às 21h, sete zonas de Fortaleza, doze restaurantes, 460 pedidos e 14 dias de histórico. Dentro deles há problemas plantados que os agentes precisam encontrar sozinhos:
+**Demo:** https://ariadnacavalcantee.github.io/delivery-ops-agents/
 
-- chuva em Parangaba e Messejana derrubando a oferta de entregadores;
-- uma cozinha (Brasa do Cocó) que vem piorando há duas semanas;
-- um restaurante (Sushi Kaze) que só estoura no pico de hoje;
-- um restaurante (Wok Fátima) com atraso crônico escondido por uma noite boa;
-- uma pizzaria que marca o pedido como pronto antes da hora e prende entregadores no balcão;
-- endereços difíceis de achar no Meireles.
+## Os dados
+
+A base é a [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) (CC BY-NC-SA 4.0): cerca de 100 mil pedidos reais feitos entre 2016 e 2018, com data de compra, aprovação, postagem, entrega, prazo prometido ao cliente e avaliação.
+
+Escolhi três períodos que contam histórias diferentes. Cada um é comparado com as semanas anteriores (linha de base):
+
+| Período | Atraso | O que os dados mostram |
+| --- | --- | --- |
+| Fev–mar 2018 | 21% (base 6,1%) | Vendedores postaram no prazo; o **transporte** ficou 3,2 dias mais lento, concentrado fora de SP, e o **prazo prometido encurtou** 3,9 dias ao mesmo tempo |
+| Black Friday 2017 | 16,1% (base 4,2%) | Transporte mais lento **e** vendedores postando fora do prazo (de 8,2% para 14,8%) |
+| Abril 2018 | 3,8% (base 8,9%) | Recuperação. Serve de controle: os agentes não podem inventar problema |
+
+Em toda a base, pedido atrasado recebe nota média **2,3**, contra **4,3** dos que chegam no prazo.
 
 ## Os agentes
 
 ```
-Monitor → [ Diagnóstico ∥ Restaurantes ] → Ações → Relatório
+Monitor → [ Diagnóstico ∥ Vendedores ] → Ações → Relatório
 ```
 
-| Agente | O que faz | Onde entra a IA |
-| --- | --- | --- |
-| Monitor | Lê os pedidos e levanta alertas | Regras detectam (rápido e auditável); o modelo prioriza e resume |
-| Diagnóstico | Explica por que os pedidos atrasaram | Cruza as etapas do atraso com zonas e restaurantes |
-| Restaurantes | Separa problema de hoje de problema crônico | Compara a noite com 14 dias de histórico e desconta a chuva |
-| Ações | Transforma diagnóstico em próximos passos | Define ação, responsável, urgência e impacto esperado |
-| Relatório | Escreve o resumo para a liderança | Consolida a saída dos outros quatro |
+| Agente | O que faz |
+| --- | --- |
+| Monitor | Compara o período com a linha de base e levanta alertas (estados, etapas, nota, vendedores) |
+| Diagnóstico | Decompõe cada atraso em aprovação, postagem, transporte e prazo prometido |
+| Vendedores | Separa quem atrasa por postar tarde de quem só vende para regiões afetadas pelo transporte |
+| Ações | Transforma o diagnóstico em ações com responsável e urgência (agora, esta semana, próximo pico) |
+| Relatório | Escreve o resumo executivo do período |
 
-Diagnóstico e Restaurantes não dependem um do outro, então rodam em paralelo.
+Diagnóstico e Vendedores não dependem um do outro, então rodam em paralelo.
 
 ## Decisões de projeto
 
-- **Os agentes recebem indicadores, não pedidos crus.** Uma camada determinística (`src/lib/analysis.ts`) transforma 460 pedidos em agregados por zona, restaurante e etapa do atraso. O prompt fica pequeno, barato e o modelo não precisa fazer conta.
-- **Detecção por regra, julgamento por IA.** "O pedido passou do prazo?" é uma comparação, não precisa de LLM. A IA entra onde há interpretação: causa, priorização, recomendação e texto.
-- **Saída estruturada.** Cada agente devolve JSON tipado, então a interface desenha cada resultado do jeito certo (lista de alertas, barra de causas, tabela, quadro de ações, documento) em vez de despejar texto.
-- **Eventos ao vivo.** O orquestrador emite um evento a cada passo de cada agente, e a interface mostra o progresso enquanto eles trabalham.
-- **Modo simulado.** Sem chave de API, os agentes usam lógica local que produz o mesmo formato de saída. A demo funciona sempre, e o modo é sinalizado na tela.
+- **Os agentes recebem agregados, não pedidos crus.** `scripts/build_data.py` transforma os ~100 mil pedidos em ~70 KB de indicadores por período, estado, etapa e vendedor. O prompt fica pequeno, barato e o modelo não precisa fazer conta.
+- **Detecção por regra, julgamento por IA.** "O atraso dobrou?" é uma comparação. A IA entra onde há interpretação: causa, priorização, recomendação e texto.
+- **Culpa no lugar certo.** O agente de Vendedores olha o percentual de postagem fora do limite antes de apontar um vendedor. Na crise de 2018, a maioria dos vendedores com atraso alto postou no prazo: o problema era o transporte para fora de SP.
+- **Saída estruturada.** Cada agente devolve JSON tipado, e a interface desenha cada resultado no formato certo.
+- **Site estático.** Publicado no GitHub Pages. Os agentes rodam no navegador: no modo simulado (padrão) usam lógica local; com uma chave da API da Anthropic, usam o Claude.
 
 ## Rodando
 
@@ -42,11 +49,14 @@ npm install
 npm run dev
 ```
 
-O site é estático e publicado no GitHub Pages a cada push na `main` (ver `.github/workflows/pages.yml`). Como não existe servidor, os agentes rodam no navegador:
+Para regenerar os dados, baixe os CSVs da Olist e rode:
 
-- **Modo simulado (padrão):** lógica local, sem IA, para a demo funcionar sempre.
-- **Com o Claude:** clique em "Usar o Claude com a minha chave" e informe uma chave da API da Anthropic. Ela fica só no navegador de quem usa e vai direto para a API.
+```bash
+python3 scripts/build_data.py caminho/para/os/csvs
+```
+
+Para usar o Claude, clique em "Usar o Claude com a minha chave" e informe uma chave da API da Anthropic. Ela fica só no navegador de quem usa e vai direto para a API.
 
 ## Stack
 
-Next.js 15 (App Router), TypeScript, Tailwind CSS 4, shadcn/ui (Radix), Anthropic SDK. Tema claro e escuro.
+Next.js 15 (export estático), TypeScript, Tailwind CSS 4, shadcn/ui (Radix), Anthropic SDK, pandas. Tema claro e escuro.

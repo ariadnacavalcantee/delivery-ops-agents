@@ -1,6 +1,6 @@
 "use client";
 
-import { Bike, ChevronRight, LayoutGrid, LifeBuoy, Loader2, MapPin, Package, Settings, Store, Check, CircleAlert } from "lucide-react";
+import { Truck, ChevronRight, LayoutGrid, LifeBuoy, Loader2, MapPin, Package, Settings, Store, Check, CircleAlert } from "lucide-react";
 import type { AgentId } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -9,7 +9,7 @@ export type AgentStatus = "aguardando" | "rodando" | "concluido" | "erro";
 export const AGENT_META: Record<AgentId, { name: string; role: string }> = {
   monitor: { name: "Monitor", role: "Vigia os pedidos e levanta alertas" },
   diagnostico: { name: "Diagnóstico", role: "Descobre por que estão atrasando" },
-  restaurantes: { name: "Restaurantes", role: "Separa o problema de hoje do crônico" },
+  vendedores: { name: "Vendedores", role: "Separa atraso de postagem de atraso de transporte" },
   acoes: { name: "Ações", role: "Transforma diagnóstico em plano" },
   relatorio: { name: "Relatório", role: "Escreve o resumo da noite" },
 };
@@ -17,9 +17,9 @@ export const AGENT_META: Record<AgentId, { name: string; role: string }> = {
 const NAV = [
   { label: "Visão geral", icon: LayoutGrid, active: true },
   { label: "Pedidos", icon: Package },
-  { label: "Restaurantes", icon: Store },
-  { label: "Entregadores", icon: Bike },
-  { label: "Zonas", icon: MapPin },
+  { label: "Vendedores", icon: Store },
+  { label: "Transportadoras", icon: Truck },
+  { label: "Estados", icon: MapPin },
 ];
 
 function StatusIcon({ s }: { s: AgentStatus }) {
@@ -30,14 +30,14 @@ function StatusIcon({ s }: { s: AgentStatus }) {
 }
 
 export default function Sidebar({ status, times }: { status: Record<AgentId, AgentStatus>; times: Partial<Record<AgentId, number>> }) {
-  const order: AgentId[] = ["monitor", "diagnostico", "restaurantes", "acoes", "relatorio"];
+  const order: AgentId[] = ["monitor", "diagnostico", "vendedores", "acoes", "relatorio"];
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r bg-background lg:flex">
       <div className="flex items-center gap-3 border-b px-5 py-4">
         <div className="grid size-9 place-items-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">D</div>
         <div className="min-w-0 flex-1">
           <p className="whitespace-nowrap text-sm font-semibold leading-tight">Delivery Ops Agents</p>
-          <p className="text-xs text-muted-foreground">Operações Fortaleza</p>
+          <p className="text-xs text-muted-foreground">Dados reais da Olist</p>
         </div>
       </div>
 
@@ -76,7 +76,7 @@ export default function Sidebar({ status, times }: { status: Record<AgentId, Age
           ))}
         </ol>
         <p className="px-2 pt-2 text-xs leading-relaxed text-muted-foreground">
-          Diagnóstico e Restaurantes rodam em paralelo depois do Monitor.
+          Diagnóstico e Vendedores rodam em paralelo depois do Monitor.
         </p>
       </nav>
 

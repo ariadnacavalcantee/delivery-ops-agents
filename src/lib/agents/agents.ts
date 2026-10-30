@@ -1,15 +1,15 @@
 import type {
-  ActionsOutput, AgentId, Alert, DiagnosisOutput, MonitorOutput, Operation,
-  ReportOutput, RestaurantFinding, RestaurantsOutput,
+  ActionsOutput, AgentId, Alert, Cause, DiagnosisOutput, MonitorOutput, ReportOutput, Scenario,
+  SellerFinding, SellersOutput, Action,
 } from "../types";
-import * as A from "../analysis";
+import { periodLabel } from "../data";
 import { callJSON } from "./llm";
 
 export type Ctx = {
-  op: Operation;
+  sc: Scenario;
   monitor?: MonitorOutput;
   diagnostico?: DiagnosisOutput;
-  restaurantes?: RestaurantsOutput;
+  vendedores?: SellersOutput;
   acoes?: ActionsOutput;
   relatorio?: ReportOutput;
 };
@@ -18,87 +18,117 @@ export type Log = (msg: string) => void;
 
 export type AgentDef = {
   id: AgentId;
-  name: string;
-  role: string;
   run: (ctx: Ctx, live: boolean, log: Log) => Promise<{ output: unknown; tokens?: number }>;
 };
 
+const r1 = (n: number) => Math.round(n * 10) / 10;
+const list = (xs: string[]) => (xs.length <= 1 ? xs.join("") : `${xs.slice(0, -1).join(", ")} e ${xs[xs.length - 1]}`);
+
+// Estados que pioraram de verdade: volume relevante e atraso pelo menos 2x a linha de base.
+export function hotStates(sc: Scenario) {
+  return sc.states
+    .filter((s) => s.orders >= 100 && s.lateRatePct >= 20 && s.lateRatePct >= 2 * (s.baselineLateRatePct ?? 0))
+    .sort((a, b) => b.lateRatePct - a.lateRatePct);
+}
+
+// Dados enviados ao modelo: só o que importa, nada de pedidos crus.
+function compact(sc: Scenario) {
+  return {
+    periodo: periodLabel(sc.start, sc.end),
+    linhaDeBase: periodLabel(sc.baseStart, sc.baseEnd),
+    visaoGeral: sc.overview,
+    etapasEmDias: sc.stages,
+    causasPorPedido: sc.causes,
+    semanas: sc.timeline.map((t) => ({ semana: t.label, noPeriodo: t.inPeriod, atrasoPct: t.lateRatePct })),
+    estados: sc.states.slice(0, 14),
+    vendedores: sc.sellers.slice(0, 15),
+  };
+}
+
 // ───────────────────────── Agente 1 · Monitor ─────────────────────────
-// Detecção por regras (rápida, auditável) + LLM para priorizar e resumir.
-function detectAlerts(op: Operation): Alert[] {
+function detectAlerts(sc: Scenario): Alert[] {
+  const o = sc.overview;
+  const p = sc.stages.period;
+  const b = sc.stages.baseline;
   const alerts: Alert[] = [];
-  for (const z of A.byZone(op)) {
-    if (z.raining && z.lateRatePct > 40) {
-      alerts.push({
-        id: `zona-${z.zoneId}`, severity: "critico", zoneId: z.zoneId,
-        title: `${z.zone}: chuva + falta de entregadores`,
-        detail: `${z.lateRatePct}% dos pedidos atrasados, ${z.ordersPerCourier} pedidos abertos por entregador, alocação média de ${z.avgAssignMin} min.`,
-        affectedOrders: Math.round((z.orders * z.lateRatePct) / 100),
-      });
-    } else if (z.ordersPerCourier >= 1.2 && z.lateRatePct > 20) {
-      alerts.push({
-        id: `zona-${z.zoneId}`, severity: "alto", zoneId: z.zoneId,
-        title: `${z.zone}: demanda acima da capacidade`,
-        detail: `${z.openOrders} pedidos abertos para ${z.activeCouriers} entregadores; ${z.lateRatePct}% de atraso.`,
-        affectedOrders: Math.round((z.orders * z.lateRatePct) / 100),
-      });
-    }
-    if (z.addressIssuePct > 15) {
-      alerts.push({
-        id: `endereco-${z.zoneId}`, severity: "medio", zoneId: z.zoneId,
-        title: `${z.zone}: endereços com problema`,
-        detail: `${z.addressIssuePct}% dos pedidos com dificuldade de localização na entrega.`,
-        affectedOrders: Math.round((z.orders * z.addressIssuePct) / 100),
-      });
-    }
-  }
-  for (const r of A.byRestaurant(op)) {
-    if (r.orders >= 15 && r.lateRatePct > 40 && r.prepOverBasePct > 25) {
-      alerts.push({
-        id: `rest-${r.restaurantId}`, severity: r.lateRatePct > 70 ? "critico" : "alto",
-        restaurantId: r.restaurantId,
-        title: `${r.restaurant}: preparo muito acima do normal`,
-        detail: `Preparo médio de ${r.avgPrepMin} min (normal: ${r.basePrepMin} min); ${r.lateRatePct}% de atraso.`,
-        affectedOrders: Math.round((r.orders * r.lateRatePct) / 100),
-      });
-    }
-    if (r.avgPickupWaitMin > 6) {
-      alerts.push({
-        id: `coleta-${r.restaurantId}`, severity: "medio", restaurantId: r.restaurantId,
-        title: `${r.restaurant}: entregadores esperando na coleta`,
-        detail: `Espera média de ${r.avgPickupWaitMin} min no balcão após o pedido ser marcado como pronto.`,
-        affectedOrders: r.orders,
-      });
-    }
-  }
+
+  if (o.lateRatePct >= 10 && o.lateRatePct >= 2 * o.baselineLateRatePct)
+    alerts.push({
+      id: "geral", severity: "critico", affectedOrders: o.lateOrders,
+      title: `Atraso ${r1(o.lateRatePct / o.baselineLateRatePct)}x acima do normal`,
+      detail: `${o.lateRatePct}% dos pedidos chegaram depois da data prometida, contra ${o.baselineLateRatePct}% na linha de base.`,
+    });
+
+  const dt = p.transit - b.transit;
+  if (dt >= 2)
+    alerts.push({
+      id: "transporte", severity: dt >= 3 ? "critico" : "alto", affectedOrders: o.lateOrders,
+      title: `Transporte ${r1(dt)} dias mais lento`,
+      detail: `Da transportadora até o cliente: ${p.transit} dias em média, contra ${b.transit} na linha de base.`,
+    });
+
+  for (const s of hotStates(sc).slice(0, 3))
+    alerts.push({
+      id: `estado-${s.state}`, severity: s.lateRatePct >= 35 ? "critico" : "alto",
+      affectedOrders: Math.round((s.orders * s.lateRatePct) / 100),
+      title: `${s.state}: ${s.lateRatePct}% dos pedidos atrasados`,
+      detail: `Era ${s.baselineLateRatePct}% na linha de base. Transporte para o estado em ${s.transitDays} dias (antes ${s.baselineTransitDays}).`,
+    });
+
+  if (o.sellerLatePct - o.baselineSellerLatePct >= 4)
+    alerts.push({
+      id: "postagem", severity: "alto", affectedOrders: Math.round((o.orders * o.sellerLatePct) / 100),
+      title: "Vendedores postando fora do prazo",
+      detail: `${o.sellerLatePct}% dos pedidos foram entregues à transportadora depois do limite, contra ${o.baselineSellerLatePct}% antes.`,
+    });
+
+  if (b.promised - p.promised >= 2 && o.lateRatePct > o.baselineLateRatePct)
+    alerts.push({
+      id: "prazo", severity: "medio", affectedOrders: o.lateOrders,
+      title: `Prazo prometido encurtou ${r1(b.promised - p.promised)} dias`,
+      detail: `A estimativa mostrada ao cliente caiu de ${b.promised} para ${p.promised} dias enquanto o transporte ficou mais lento.`,
+    });
+
+  if (o.baselineReview - o.review >= 0.3)
+    alerts.push({
+      id: "nota", severity: "medio", affectedOrders: o.lateOrders,
+      title: `Nota média caiu para ${o.review}`,
+      detail: `Era ${o.baselineReview}. Pedidos atrasados recebem nota ${o.reviewLate}; no prazo, ${o.reviewOnTime}.`,
+    });
+
+  const badSellers = sc.sellers.filter((s) => s.lateRatePct >= 40 && s.postedLatePct >= 30);
+  if (badSellers.length)
+    alerts.push({
+      id: "vendedores", severity: "medio", affectedOrders: badSellers.reduce((n, s) => n + Math.round((s.orders * s.lateRatePct) / 100), 0),
+      title: `${badSellers.length} ${badSellers.length > 1 ? "vendedores" : "vendedor"} com atraso acima de 40% por postagem`,
+      detail: `${list(badSellers.map((s) => `${s.sellerId} (${s.state})`))} postam depois do limite na maioria dos pedidos.`,
+    });
+
   const rank = { critico: 0, alto: 1, medio: 2 };
-  return alerts.sort((a, b) => rank[a.severity] - rank[b.severity] || b.affectedOrders - a.affectedOrders);
+  return alerts.sort((a, b2) => rank[a.severity] - rank[b2.severity]);
 }
 
 const monitor: AgentDef = {
   id: "monitor",
-  name: "Monitor",
-  role: "Vigia a operação em tempo real e levanta alertas",
   async run(ctx, live, log) {
-    const ov = A.overview(ctx.op);
-    log(`Lendo ${ov.totalOrders} pedidos de ${ctx.op.zones.length} zonas`);
-    const alerts = detectAlerts(ctx.op);
-    log(`${ov.lateOrders} pedidos atrasados (${ov.lateRatePct}%), ${alerts.length} alertas detectados por regra`);
-    const base = { lateOrders: ov.lateOrders, lateRate: ov.lateRatePct, avgDelayMin: ov.avgDelayLateMin };
+    const o = ctx.sc.overview;
+    log(`Lendo ${o.orders.toLocaleString("pt-BR")} pedidos entregues entre ${periodLabel(ctx.sc.start, ctx.sc.end)}`);
+    const alerts = detectAlerts(ctx.sc);
+    log(`${o.lateOrders} atrasados (${o.lateRatePct}%), ${alerts.length} alertas detectados por regra`);
+    const base = { lateOrders: o.lateOrders, lateRate: o.lateRatePct };
 
     if (!live) {
-      const crit = alerts.filter((a) => a.severity === "critico");
-      return {
-        output: {
-          ...base, alerts,
-          summary: `${ov.lateRatePct}% dos pedidos estão atrasados, ${ov.avgDelayLateMin} min em média. ${crit.length} alertas críticos: ${crit.map((a) => a.title.split(":")[0]).join(", ")}. R$ ${ov.gmvAtRisk.toLocaleString("pt-BR")} em pedidos com risco de cancelamento ou cupom.`,
-        } satisfies MonitorOutput,
-      };
+      const summary = alerts.length
+        ? `${o.lateRatePct}% dos pedidos chegaram atrasados, contra ${o.baselineLateRatePct}% na linha de base. ${alerts.filter((a) => a.severity === "critico").length} alertas críticos, puxados por ${alerts[0].title.toLowerCase()}.`
+        : o.lateRatePct < o.baselineLateRatePct
+          ? `Operação recuperada: ${o.lateRatePct}% de atraso, abaixo dos ${o.baselineLateRatePct}% das semanas anteriores. Nenhum alerta.`
+          : `Operação dentro do normal: ${o.lateRatePct}% de atraso. Nenhum alerta.`;
+      return { output: { ...base, alerts, summary } satisfies MonitorOutput };
     }
     log("Pedindo ao modelo para priorizar os alertas");
     const { data, tokens } = await callJSON<{ summary: string; order: string[] }>({
-      system: "Você é o Agente Monitor. Recebe indicadores e alertas detectados por regras. Reordene os alertas por impacto real na operação AGORA e escreva um resumo de 2 frases para o gestor.",
-      input: { overview: ov, alerts },
+      system: "Você é o Agente Monitor. Recebe os indicadores de um período e os alertas detectados por regras. Reordene os alertas pelo impacto na operação e escreva um resumo de 2 frases para a gestora. Se não houver alertas, diga se a operação está normal ou se recuperou.",
+      input: { visaoGeral: ctx.sc.overview, alertas: alerts },
       schemaHint: `{"summary": string, "order": string[] /* ids dos alertas em ordem de prioridade */}`,
     });
     const sorted = data.order.map((id) => alerts.find((a) => a.id === id)).filter(Boolean) as Alert[];
@@ -108,113 +138,110 @@ const monitor: AgentDef = {
 };
 
 // ───────────────────────── Agente 2 · Diagnóstico ─────────────────────────
+const CAUSE_CAT: Record<string, Cause["category"]> = {
+  transporte: "transporte", postagem_do_vendedor: "vendedor", prazo_prometido_curto: "prazo", aprovacao_do_pagamento: "pagamento",
+};
+
 const diagnostico: AgentDef = {
   id: "diagnostico",
-  name: "Diagnóstico",
-  role: "Investiga por que os pedidos estão atrasando",
   async run(ctx, live, log) {
-    const comps = A.delayComponents(ctx.op);
-    const zones = A.byZone(ctx.op);
-    const rests = A.byRestaurant(ctx.op);
-    log(`Decompondo ${ctx.monitor?.lateOrders} atrasos em preparo, alocação, coleta, trajeto e endereço`);
+    const { sc } = ctx;
+    const o = sc.overview, p = sc.stages.period, b = sc.stages.baseline;
+    log(`Separando ${o.lateOrders} atrasos em aprovação, postagem, transporte e prazo prometido`);
 
     if (!live) {
-      const share = (k: string) => (comps.find((c) => c.component === k)?.sharePct ?? 0) / 100;
-      const slowKitchens = rests.filter((r) => r.prepOverBasePct > 25).sort((a, b) => b.prepOverBasePct - a.prepOverBasePct);
-      const rainy = zones.filter((z) => z.raining);
-      const addr = zones.filter((z) => z.addressIssuePct > 15);
-      const pickup = rests.filter((r) => r.avgPickupWaitMin > 6);
-      return {
-        output: {
-          summary: `Mais da metade dos atrasos nasce na cozinha, concentrada em ${slowKitchens.length} restaurantes. O segundo foco é a falta de entregadores nas zonas com chuva.`,
-          causes: [
-            {
-              cause: "Preparo lento em restaurantes específicos", category: "cozinha", share: share("preparo_lento"), confidence: "alta",
-              evidence: slowKitchens.map((r) => `${r.restaurant} +${r.prepOverBasePct}% no preparo`).join("; "),
-            },
-            {
-              cause: "Chuva reduzindo a oferta de entregadores", category: "clima", share: share("falta_de_entregador"), confidence: "alta",
-              evidence: rainy.map((z) => `${z.zone}: ${z.activeCouriers} entregadores, alocação de ${z.avgAssignMin} min`).join("; "),
-            },
-            {
-              cause: "Endereços difíceis de localizar", category: "endereco", share: share("problema_de_endereco"), confidence: "media",
-              evidence: addr.map((z) => `${z.zone}: ${z.addressIssuePct}% dos pedidos`).join("; ") + ". Padrão típico de condomínios e prédios sem portaria identificada.",
-            },
-            {
-              cause: "Pedido marcado como pronto antes da hora", category: "cozinha", share: share("espera_na_coleta"), confidence: "media",
-              evidence: pickup.map((r) => `${r.restaurant}: ${r.avgPickupWaitMin} min de espera no balcão`).join("; ") + ". Prende entregadores que poderiam atender outros pedidos.",
-            },
-          ],
-        } satisfies DiagnosisOutput,
+      const hot = hotStates(sc).slice(0, 4);
+      const evidence: Record<string, string> = {
+        transporte: `Transporte médio de ${b.transit} para ${p.transit} dias.` + (hot.length ? ` Pior em ${list(hot.map((s) => `${s.state} (${s.lateRatePct}%)`))}.` : " Sem estado fora da curva."),
+        vendedor: `Postagem fora do limite em ${o.sellerLatePct}% dos pedidos (antes ${o.baselineSellerLatePct}%). Tempo até postar: ${b.handover} → ${p.handover} dias.`,
+        prazo: `Prazo prometido médio de ${b.promised} para ${p.promised} dias.`,
+        pagamento: `Aprovação do pagamento em ${p.approve} dias (antes ${b.approve}).`,
       };
+      const causes: Cause[] = sc.causes
+        .filter((c) => c.sharePct >= 1)
+        .map((c) => {
+          const cat = CAUSE_CAT[c.component] ?? "outro";
+          // o rótulo só fala em piora quando a etapa piorou de fato
+          const label = {
+            transporte: p.transit > b.transit + 0.5 ? "Transporte mais lento até o cliente" : "Transporte (atrasos pontuais)",
+            vendedor: o.sellerLatePct > o.baselineSellerLatePct + 2 ? "Vendedores demorando para postar" : "Postagem do vendedor",
+            prazo: b.promised - p.promised >= 1 ? "Prazo prometido curto demais" : "Prazo prometido apertado em casos isolados",
+            pagamento: "Demora na aprovação do pagamento",
+          }[cat as string] ?? c.component;
+          return {
+            cause: label, category: cat, share: Math.round(c.sharePct * 10) / 1000, evidence: evidence[cat] ?? "",
+            confidence: c.sharePct >= 40 ? "alta" : c.sharePct >= 10 ? "media" : "baixa",
+          };
+        });
+      const top = causes[0];
+      const recovering = o.lateRatePct < o.baselineLateRatePct;
+      const summary = recovering
+        ? `Os atrasos caíram e o transporte voltou a ${p.transit} dias. Os poucos atrasos restantes seguem concentrados no transporte, sem padrão novo.`
+        : top.category === "transporte" && o.sellerLatePct - o.baselineSellerLatePct >= 4
+          ? `Duas coisas ao mesmo tempo: o transporte ficou ${r1(p.transit - b.transit)} dias mais lento e os vendedores passaram a postar fora do prazo com mais frequência. O transporte explica a maior parte.`
+          : top.category === "transporte"
+            ? `O problema está depois do vendedor: ele postou no prazo de sempre, mas o transporte ficou ${r1(p.transit - b.transit)} dias mais lento${b.promised - p.promised >= 2 ? `, e o prazo prometido ainda encurtou ${r1(b.promised - p.promised)} dias` : ""}.`
+            : `A principal causa é ${top.cause.toLowerCase()}.`;
+      return { output: { summary, causes } satisfies DiagnosisOutput };
     }
-    log("Cruzando etapas do atraso com zonas e restaurantes");
+    log("Cruzando etapas da entrega com estados e vendedores");
     const { data, tokens } = await callJSON<DiagnosisOutput>({
-      system: "Você é o Agente de Diagnóstico. Identifique as causas-raiz dos atrasos. Diferencie causas na cozinha, na logística, no clima, na demanda e no endereço. Para cada causa, traga evidência numérica dos dados e um grau de confiança. Ordene da causa que mais explica atrasos para a que menos explica.",
-      input: { componentesDoAtraso: comps, zonas: zones, restaurantes: rests, alertas: ctx.monitor?.alerts },
-      schemaHint: `{"summary": string, "causes": [{"cause": string, "category": "cozinha"|"entregador"|"clima"|"demanda"|"endereco"|"outro", "share": number /* 0 a 1 */, "evidence": string, "confidence": "alta"|"media"|"baixa"}]}`,
+      system: "Você é o Agente de Diagnóstico de um marketplace. Descubra as causas-raiz dos atrasos comparando o período com a linha de base. Diferencie: transporte (transportadora até o cliente), vendedor (demora para postar), prazo prometido curto demais e aprovação do pagamento. Use causasPorPedido para as participações. Para cada causa, traga evidência numérica e confiança. Se o período estiver melhor que a linha de base, diga isso.",
+      input: compact(sc),
+      schemaHint: `{"summary": string, "causes": [{"cause": string, "category": "transporte"|"vendedor"|"prazo"|"pagamento"|"demanda"|"outro", "share": number /* 0 a 1 */, "evidence": string, "confidence": "alta"|"media"|"baixa"}]}`,
     });
     return { output: data, tokens };
   },
 };
 
-// ───────────────────────── Agente 3 · Restaurantes ─────────────────────────
+// ───────────────────────── Agente 3 · Vendedores ─────────────────────────
 const RISK_ORDER = { alto: 0, medio: 1, baixo: 2 };
-const restaurantes: AgentDef = {
-  id: "restaurantes",
-  name: "Restaurantes",
-  role: "Separa o problema de hoje do problema crônico",
+
+const vendedores: AgentDef = {
+  id: "vendedores",
   async run(ctx, live, log) {
-    const trends = A.restaurantTrends(ctx.op);
-    const today = A.byRestaurant(ctx.op);
-    log(`Comparando hoje com os últimos 14 dias de ${trends.length} restaurantes`);
-    const rainyZones = new Set(ctx.op.zones.filter((z) => z.raining).map((z) => z.id));
-    const joined = trends.map((t) => {
-      const td = today.find((x) => x.restaurantId === t.restaurantId)!;
-      return { ...t, lateRateTodayPct: td.lateRatePct, prepOverBaseTodayPct: td.prepOverBasePct, zoneRaining: rainyZones.has(td.zoneId) };
-    });
+    const { sc } = ctx;
+    log(`Comparando ${sc.sellers.length} vendedores com volume no período com os 90 dias anteriores`);
 
     if (!live) {
-      const findings = joined
-        .map((t) => {
-          const delta = t.lateRateWeek2Pct - t.lateRateWeek1Pct;
-          const trend: RestaurantFinding["trend"] = delta > 5 ? "piorando" : delta < -5 ? "melhorando" : "estavel";
-          const chronic = t.lateRate14dPct > 15;
-          const spike = t.lateRateTodayPct > 30 && !chronic;
-          let pattern = "";
-          if (chronic && trend === "piorando")
-            pattern = `Atraso subiu de ${t.lateRateWeek1Pct}% para ${t.lateRateWeek2Pct}% em uma semana; preparo foi de ${t.avgPrepWeek1} para ${t.avgPrepWeek2} min. ${t.cancellations14d} cancelamentos em 14 dias. Problema crônico e acelerando.`;
-          else if (chronic)
-            pattern = `Atraso alto e estável (${t.lateRate14dPct}% em 14 dias) com ${t.cancellations14d} cancelamentos. ` +
-              (t.lateRateTodayPct < t.lateRate14dPct
-                ? `Hoje foi uma noite boa (${t.lateRateTodayPct}%), o que pode esconder o problema.`
-                : `Hoje segue o padrão (${t.lateRateTodayPct}%).`);
-          else if (spike && t.zoneRaining && t.prepOverBaseTodayPct < 15)
-            pattern = `Histórico saudável (${t.lateRate14dPct}%) e cozinha no tempo normal. O atraso de hoje (${t.lateRateTodayPct}%) vem da chuva na zona, não do restaurante.`;
-          else if (spike)
-            pattern = `Histórico saudável (${t.lateRate14dPct}%), mas hoje está em ${t.lateRateTodayPct}% com preparo ${t.prepOverBaseTodayPct}% acima do normal. Pico pontual de demanda, não é problema estrutural.`;
-          else return null;
-          const risk: RestaurantFinding["risk"] = chronic && trend === "piorando" ? "alto" : chronic ? "medio" : "baixo";
-          const f: RestaurantFinding = {
-            restaurantId: t.restaurantId, restaurantName: t.restaurant, pattern, trend,
-            lateRate14d: t.lateRate14dPct, lateRateToday: t.lateRateTodayPct, risk,
+      const findings: SellerFinding[] = sc.sellers
+        .map((s): SellerFinding | null => {
+          const origin = s.postedLatePct >= 30 ? "postagem" : "transporte";
+          const hasHist = s.orders90d >= 15 && s.lateRate90dPct !== null;
+          const delta = hasHist ? s.lateRatePct - (s.lateRate90dPct as number) : 0;
+          const trend: SellerFinding["trend"] = !hasHist ? "estavel" : delta > 15 ? "piorando" : delta < -10 ? "melhorando" : "estavel";
+          const chronic = hasHist && (s.lateRate90dPct as number) >= 15;
+          if (!(s.lateRatePct >= 30 || (chronic && s.lateRatePct >= 15))) return null;
+
+          let pattern: string;
+          if (origin === "postagem")
+            pattern = `Postou depois do limite em ${s.postedLatePct}% dos pedidos (${s.handoverDays} dias até postar). ` +
+              (chronic ? `Já atrasava ${s.lateRate90dPct}% antes: problema crônico.` : hasHist ? `Antes atrasava só ${s.lateRate90dPct}%: problema novo no período.` : "Sem histórico suficiente antes do período.");
+          else
+            pattern = `Postou no prazo (${s.postedLatePct}% fora do limite), mas ${s.outsideSpPct}% das vendas foram para fora de SP. O atraso vem do transporte, não do vendedor.`;
+
+          const risk: SellerFinding["risk"] = origin === "postagem" ? (chronic || trend === "piorando" || s.lateRatePct >= 50 ? "alto" : "medio") : "baixo";
+          return {
+            sellerId: s.sellerId, state: s.state, pattern, origin, trend,
+            lateRate90d: hasHist ? s.lateRate90dPct : null, lateRateNow: s.lateRatePct, risk,
           };
-          return f;
         })
-        .filter((f): f is RestaurantFinding => f !== null)
-        .sort((a, b) => RISK_ORDER[a.risk] - RISK_ORDER[b.risk]);
-      return {
-        output: {
-          summary: "Um restaurante está piorando rápido e precisa de contato hoje. Outro tem atraso crônico mascarado por uma noite boa. Os demais picos de hoje são pontuais ou causados pela chuva.",
-          findings,
-        } satisfies RestaurantsOutput,
-      };
+        .filter((f): f is SellerFinding => f !== null)
+        .sort((a, b) => RISK_ORDER[a.risk] - RISK_ORDER[b.risk] || b.lateRateNow - a.lateRateNow)
+        .slice(0, 6);
+
+      const byPost = findings.filter((f) => f.origin === "postagem").length;
+      const byTransit = findings.length - byPost;
+      const summary = !findings.length
+        ? "Nenhum vendedor com atraso fora do normal neste período."
+        : `${byPost} ${byPost === 1 ? "vendedor atrasa" : "vendedores atrasam"} por demora na postagem e ${byPost === 1 ? "precisa" : "precisam"} de contato. ${byTransit ? `Em outros ${byTransit}, o atraso vem do transporte e não é culpa deles.` : ""}`.trim();
+      return { output: { summary, findings } satisfies SellersOutput };
     }
-    log("Classificando restaurantes: crônico, pontual ou saudável");
-    const { data, tokens } = await callJSON<RestaurantsOutput>({
-      system: "Você é o Agente de Restaurantes. Compare o desempenho de hoje com o histórico de 14 dias. Separe problemas crônicos (histórico ruim), tendências de piora e picos pontuais de hoje. Ignore restaurantes saudáveis. Atrasos causados por chuva na zona do restaurante NÃO são culpa do restaurante; mencione isso quando for o caso.",
-      input: { restaurantes: joined, zonasComChuva: ctx.op.zones.filter((z) => z.raining).map((z) => z.id), mapaZona: Object.fromEntries(ctx.op.restaurants.map((r) => [r.name, r.zoneId])) },
-      schemaHint: `{"summary": string, "findings": [{"restaurantId": string, "restaurantName": string, "pattern": string, "trend": "piorando"|"estavel"|"melhorando", "lateRate14d": number, "lateRateToday": number, "risk": "alto"|"medio"|"baixo"}]}`,
+    log("Classificando vendedores: atraso na postagem ou no transporte");
+    const { data, tokens } = await callJSON<SellersOutput>({
+      system: "Você é o Agente de Vendedores. Para os vendedores com atraso relevante, diga se o atraso nasce na postagem (postedLatePct alto: culpa do vendedor) ou no transporte (postou no prazo, mas vende para regiões afetadas). Compare com os 90 dias anteriores para separar problema crônico, problema novo e pico pontual. Use o id curto do vendedor. Máximo de 6 vendedores, do maior risco para o menor.",
+      input: { periodo: periodLabel(sc.start, sc.end), vendedores: sc.sellers.slice(0, 20), estadosMaisAfetados: hotStates(sc).map((s) => s.state) },
+      schemaHint: `{"summary": string, "findings": [{"sellerId": string, "state": string, "pattern": string, "origin": "postagem"|"transporte", "trend": "piorando"|"estavel"|"melhorando", "lateRate90d": number|null, "lateRateNow": number, "risk": "alto"|"medio"|"baixo"}]}`,
     });
     return { output: data, tokens };
   },
@@ -223,37 +250,78 @@ const restaurantes: AgentDef = {
 // ───────────────────────── Agente 4 · Ações ─────────────────────────
 const acoes: AgentDef = {
   id: "acoes",
-  name: "Ações",
-  role: "Transforma diagnóstico em próximos passos",
   async run(ctx, live, log) {
-    log("Lendo diagnóstico e análise de restaurantes");
+    const { sc } = ctx;
+    const o = sc.overview, p = sc.stages.period, b = sc.stages.baseline;
+    log("Lendo diagnóstico e análise de vendedores");
+
     if (!live) {
-      const rainy = ctx.op.zones.filter((z) => z.raining).map((z) => z.name);
-      const worst = ctx.restaurantes?.findings.find((f) => f.risk === "alto");
-      const chronic = ctx.restaurantes?.findings.find((f) => f.risk === "medio");
-      // pico de cozinha (não de chuva): é o caso em que reduzir capacidade ajuda
-      const spike = ctx.restaurantes?.findings.find((f) => f.risk === "baixo" && f.pattern.includes("Pico pontual"));
+      const hot = hotStates(sc).slice(0, 4).map((s) => s.state);
+      const postSellers = ctx.vendedores?.findings.filter((f) => f.origin === "postagem").map((f) => f.sellerId) ?? [];
+      const actions: Action[] = [];
       log("Priorizando por urgência e impacto");
+
+      if (p.transit - b.transit >= 2) {
+        actions.push({
+          title: `Cobrar as transportadoras nas rotas para ${list(hot.length ? hot : ["os estados mais afetados"])}`,
+          description: "Levar os números de transporte por estado e pedir plano de normalização, ou redistribuir volume para outra transportadora nessas rotas.",
+          owner: "logistica", urgency: "agora", expectedImpact: `Trazer o transporte de volta para perto de ${b.transit} dias.`, target: hot.join(", "),
+        });
+        actions.push({
+          title: `Ampliar o prazo exibido para ${list(hot.length ? hot : ["as rotas afetadas"])}`,
+          description: "Enquanto o transporte não normaliza, prometer um prazo realista no checkout. Atraso que o cliente já esperava não vira nota baixa.",
+          owner: "produto", urgency: "agora", expectedImpact: "Menos pedidos marcados como atrasados e menos reclamações.", target: hot.join(", "),
+        });
+      }
+      if (o.lateRatePct >= 10)
+        actions.push({
+          title: "Avisar os clientes de pedidos atrasados antes que reclamem",
+          description: "Mensagem proativa com a nova previsão para cada pedido que passou da data estimada.",
+          owner: "atendimento", urgency: "agora", expectedImpact: `Proteger a nota: pedidos atrasados recebem ${o.reviewLate}, no prazo ${o.reviewOnTime}.`,
+        });
+      if (b.promised - p.promised >= 2)
+        actions.push({
+          title: "Revisar o cálculo do prazo prometido",
+          description: `O prazo médio caiu de ${b.promised} para ${p.promised} dias justamente quando o transporte desacelerou. Incluir o tempo de transporte recente por estado na estimativa.`,
+          owner: "produto", urgency: "esta_semana", expectedImpact: "Estimativa que acompanha a realidade da rota.",
+        });
+      if (postSellers.length)
+        actions.push({
+          title: `Contato com vendedores que postam fora do prazo: ${list(postSellers)}`,
+          description: "Mostrar os pedidos postados depois do limite e combinar um plano. Para reincidentes, reduzir a exposição até normalizar.",
+          owner: "comercial", urgency: "esta_semana", expectedImpact: "Menos atraso que nasce antes da transportadora.", target: postSellers.join(", "),
+        });
+      if (o.sellerLatePct - o.baselineSellerLatePct >= 4)
+        actions.push({
+          title: "Plano de capacidade com vendedores antes do próximo pico",
+          description: "Em datas como Black Friday, pedir previsão de volume e confirmar capacidade de postagem dos maiores vendedores com antecedência.",
+          owner: "comercial", urgency: "proximo_pico", expectedImpact: "Evitar que a postagem dobre de atraso no pico.",
+        });
+      actions.push({
+        title: "Alerta automático por estado",
+        description: `Disparar este fluxo de agentes quando o transporte de um estado passar 2 dias da média ou o atraso semanal dobrar.`,
+        owner: "operacoes", urgency: "proximo_pico", expectedImpact: "Detectar a próxima crise na primeira semana, não na quarta.",
+      });
+      if (o.lateRatePct < o.baselineLateRatePct)
+        actions.unshift({
+          title: "Registrar o que fez a operação se recuperar",
+          description: "Comparar transportadoras, prazos e vendedores com o período de crise para transformar a recuperação em regra.",
+          owner: "operacoes", urgency: "esta_semana", expectedImpact: "Repetir o que funcionou na próxima crise.",
+        });
+
+      const now = actions.filter((a) => a.urgency === "agora").length;
       return {
         output: {
-          summary: "Duas ações para agora (chuva e cozinha), duas para hoje e duas estruturais para a semana.",
-          actions: [
-            { title: `Ativar incentivo de chuva em ${rainy.join(" e ")}`, description: "Bônus por entrega nas zonas com chuva e notificação para entregadores de zonas vizinhas com folga (Benfica e Fátima).", owner: "logistica", urgency: "agora", expectedImpact: "Reduzir o tempo de alocação, hoje acima de 15 min nessas zonas.", target: rainy.join(", ") },
-            { title: "Aumentar o tempo prometido nas zonas com chuva", description: "Ajustar a estimativa exibida ao cliente enquanto durar a chuva, para trocar atraso por expectativa correta.", owner: "produto", urgency: "agora", expectedImpact: "Menos reclamações e cupons de compensação.", target: rainy.join(", ") },
-            ...(spike ? [{ title: `Pausar temporariamente ${spike.restaurantName} no pico`, description: "Ativar modo de capacidade reduzida por 30 min para a cozinha zerar a fila.", owner: "operacoes" as const, urgency: "agora" as const, expectedImpact: "Fila de preparo volta ao normal sem cancelar pedidos.", target: spike.restaurantName }] : []),
-            ...(worst ? [{ title: `Contato do comercial com ${worst.restaurantName}`, description: "Apresentar a piora das duas últimas semanas e entender se houve mudança na cozinha (equipe, cardápio, volume).", owner: "comercial" as const, urgency: "hoje" as const, expectedImpact: "Interromper a tendência antes de virar perda de parceiro e de clientes.", target: worst.restaurantName }] : []),
-            { title: "Corrigir o tempo de 'pedido pronto' da Pizzaria Forno Velho", description: "Restaurante marca pronto antes da hora e o entregador espera no balcão. Orientar o uso correto do botão.", owner: "operacoes", urgency: "hoje", expectedImpact: "Liberar entregadores presos na coleta durante o pico.", target: "Pizzaria Forno Velho" },
-            { title: "Complemento de endereço obrigatório no Meireles", description: "Pedir bloco, torre e referência no checkout para endereços em condomínios.", owner: "produto", urgency: "esta_semana", expectedImpact: "Menos tempo perdido procurando o cliente na entrega.", target: "Meireles" },
-            ...(chronic ? [{ title: `Plano de melhoria com ${chronic.restaurantName}`, description: "Atraso crônico estável. Revisar tempo de preparo cadastrado e capacidade nos horários de pico.", owner: "comercial" as const, urgency: "esta_semana" as const, expectedImpact: "Reduzir cancelamentos recorrentes.", target: chronic.restaurantName }] : []),
-          ],
+          summary: now ? `${now} ${now === 1 ? "ação para agora" : "ações para agora"}, focadas em transporte e cliente; o resto evita que se repita.` : "Nada urgente. As ações abaixo consolidam a recuperação e preparam o próximo pico.",
+          actions,
         } satisfies ActionsOutput,
       };
     }
     log("Gerando plano de ação priorizado");
     const { data, tokens } = await callJSON<ActionsOutput>({
-      system: "Você é o Agente de Ações. Com base no diagnóstico e na análise de restaurantes, proponha de 4 a 7 ações concretas para o gestor de operações. Cada ação precisa de dono (time), urgência e impacto esperado. Ações 'agora' resolvem a noite; 'hoje' e 'esta_semana' evitam que o problema volte. Seja específico: cite zonas e restaurantes pelo nome.",
-      input: { alertas: ctx.monitor?.alerts, diagnostico: ctx.diagnostico, restaurantes: ctx.restaurantes },
-      schemaHint: `{"summary": string, "actions": [{"title": string, "description": string, "owner": "operacoes"|"logistica"|"comercial"|"produto", "urgency": "agora"|"hoje"|"esta_semana", "expectedImpact": string, "target": string}]}`,
+      system: "Você é o Agente de Ações de um marketplace. Com base nos alertas, no diagnóstico e na análise de vendedores, proponha de 3 a 7 ações concretas para a gestora de operações. Cada ação tem dono (time), urgência e impacto esperado. 'agora' resolve o período atual; 'esta_semana' corrige a causa; 'proximo_pico' prepara a próxima data de pico. Cite estados e ids de vendedores pelo nome.",
+      input: { visaoGeral: sc.overview, alertas: ctx.monitor?.alerts, diagnostico: ctx.diagnostico, vendedores: ctx.vendedores },
+      schemaHint: `{"summary": string, "actions": [{"title": string, "description": string, "owner": "operacoes"|"logistica"|"comercial"|"produto"|"atendimento", "urgency": "agora"|"esta_semana"|"proximo_pico", "expectedImpact": string, "target": string}]}`,
     });
     return { output: data, tokens };
   },
@@ -262,33 +330,33 @@ const acoes: AgentDef = {
 // ───────────────────────── Agente 5 · Relatório ─────────────────────────
 const relatorio: AgentDef = {
   id: "relatorio",
-  name: "Relatório",
-  role: "Escreve o resumo da noite para a liderança",
   async run(ctx, live, log) {
+    const { sc } = ctx;
+    const o = sc.overview;
     log("Consolidando a saída dos outros 4 agentes");
-    const ov = A.overview(ctx.op);
     if (!live) {
       const now = ctx.acoes?.actions.filter((a) => a.urgency === "agora") ?? [];
-      const md = `## Resumo do pico: ${ctx.op.window.toLowerCase()}
+      const sellers = ctx.vendedores?.findings.filter((f) => f.risk !== "baixo") ?? [];
+      const md = `## ${sc.title}
 
-**${ov.lateRatePct}% dos ${ov.totalOrders} pedidos atrasaram**, em média ${ov.avgDelayLateMin} min além do prometido. R$ ${ov.gmvAtRisk.toLocaleString("pt-BR")} em pedidos estão em risco de cancelamento ou cupom.
+**${o.lateRatePct}% dos ${o.orders.toLocaleString("pt-BR")} pedidos chegaram atrasados** (linha de base: ${o.baselineLateRatePct}%). Os atrasados passaram em média ${o.avgDelayLateDays} dias da data prometida, e a nota média ficou em ${o.review}.
 
 ### O que aconteceu
 ${ctx.diagnostico?.causes.slice(0, 3).map((c) => `- **${c.cause}** (${Math.round(c.share * 100)}% dos atrasos). ${c.evidence}`).join("\n")}
 
-### Restaurantes que pedem atenção
-${ctx.restaurantes?.findings.filter((f) => f.risk !== "baixo").map((f) => `- **${f.restaurantName}**: ${f.pattern}`).join("\n")}
+### Vendedores que pedem atenção
+${sellers.length ? sellers.map((f) => `- **${f.sellerId} (${f.state})**: ${f.pattern}`).join("\n") : "Nenhum vendedor com problema de postagem relevante."}
 
 ### Decisões para agora
-${now.map((a) => `- ${a.title}. ${a.expectedImpact}`).join("\n")}
+${now.length ? now.map((a) => `- ${a.title}. ${a.expectedImpact}`).join("\n") : "Nenhuma decisão urgente."}
 
 ### Para acompanhar
-O atraso desta noite tem duas naturezas diferentes: a chuva é pontual e se resolve com incentivo e ajuste de expectativa; a cozinha lenta é estrutural e exige conversa com o parceiro esta semana.`;
+${ctx.diagnostico?.summary ?? ""}`;
       return { output: { markdown: md } satisfies ReportOutput };
     }
     const { data, tokens } = await callJSON<ReportOutput>({
-      system: "Você é o Agente de Relatório. Escreva um relatório executivo em markdown para a liderança de operações, com as seções: resumo em uma frase com números, 'O que aconteceu', 'Restaurantes que pedem atenção', 'Decisões para agora' e 'Para acompanhar'. Linguagem direta, sem jargão, no máximo 250 palavras.",
-      input: { janela: ctx.op.window, visaoGeral: ov, monitor: ctx.monitor?.summary, diagnostico: ctx.diagnostico, restaurantes: ctx.restaurantes, acoes: ctx.acoes },
+      system: "Você é o Agente de Relatório. Escreva um relatório executivo em markdown para a liderança de operações, com: título (##), resumo em uma frase com números, '### O que aconteceu', '### Vendedores que pedem atenção', '### Decisões para agora' e '### Para acompanhar'. Linguagem direta, no máximo 250 palavras.",
+      input: { titulo: sc.title, periodo: periodLabel(sc.start, sc.end), visaoGeral: o, monitor: ctx.monitor?.summary, diagnostico: ctx.diagnostico, vendedores: ctx.vendedores, acoes: ctx.acoes },
       schemaHint: `{"markdown": string}`,
       maxTokens: 2500,
     });
@@ -296,4 +364,4 @@ O atraso desta noite tem duas naturezas diferentes: a chuva é pontual e se reso
   },
 };
 
-export const AGENTS: Record<AgentId, AgentDef> = { monitor, diagnostico, restaurantes, acoes, relatorio };
+export const AGENTS: Record<AgentId, AgentDef> = { monitor, diagnostico, vendedores, acoes, relatorio };
