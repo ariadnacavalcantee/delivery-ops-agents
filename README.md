@@ -47,4 +47,4 @@ Sem `ANTHROPIC_API_KEY` o app roda em modo simulado.
 
 ## Stack
 
-Next.js 15 (App Router), TypeScript, Tailwind CSS 4, Anthropic SDK.
+Next.js 15 (App Router), TypeScript, Tailwind CSS 4, shadcn/ui (Radix), Anthropic SDK. Tema claro e escuro.

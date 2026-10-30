@@ -86,6 +86,58 @@ export function delayComponents(op: Operation) {
     .sort((a, b) => b.lateOrders - a.lateOrders);
 }
 
+// Taxa de atraso dos últimos 14 dias (média ponderada por pedidos) — referência para o "vs. normal".
+export function baselineLateRatePct(op: Operation) {
+  let late = 0;
+  let total = 0;
+  for (const h of op.history) for (const d of h.days) { late += d.lateRate * d.orders; total += d.orders; }
+  return pct(late / Math.max(total, 1));
+}
+
+// Janela dividida em blocos de 10 min: taxa de atraso geral e por zona.
+export function timeline(op: Operation, bucketMin = 10) {
+  const start = new Date(op.generatedAt).getTime() - 120 * 60_000;
+  const n = Math.ceil(120 / bucketMin);
+  const idx = (o: Order) => Math.min(n - 1, Math.floor((new Date(o.placedAt).getTime() - start) / (bucketMin * 60_000)));
+  const labels = Array.from({ length: n }, (_, i) => {
+    const d = new Date(start + i * bucketMin * 60_000);
+    return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Fortaleza" });
+  });
+  const overall = Array.from({ length: n }, () => ({ orders: 0, late: 0 }));
+  const zones = Object.fromEntries(op.zones.map((z) => [z.id, Array.from({ length: n }, () => ({ orders: 0, late: 0 }))]));
+  for (const o of op.orders) {
+    const i = idx(o);
+    overall[i].orders++;
+    zones[o.zoneId][i].orders++;
+    if (isLate(o)) { overall[i].late++; zones[o.zoneId][i].late++; }
+  }
+  const rate = (b: { orders: number; late: number }) => (b.orders ? pct(b.late / b.orders) : 0);
+  return {
+    labels,
+    overall: overall.map((b) => ({ ...b, ratePct: rate(b) })),
+    zones: op.zones.map((z) => ({ zoneId: z.id, zone: z.name, raining: z.raining, cells: zones[z.id].map(rate) })),
+  };
+}
+
+// Tempo médio de cada etapa hoje vs. o esperado.
+export function stageTimes(op: Operation) {
+  const os = op.orders;
+  const prep = avg(os.map((o) => o.prepMin));
+  const prepNormal = avg(os.map((o) => op.restaurants.find((r) => r.id === o.restaurantId)!.basePrepMin));
+  const assign = avg(os.map((o) => o.courierAssignMin));
+  const travel = avg(os.map((o) => o.travelMin + o.pickupWaitMin));
+  const travelNormal = avg(os.map((o) => o.distanceKm * 3.7 + 1.5));
+  return {
+    totalMin: r1(avg(os.map((o) => o.totalMin))),
+    promisedMin: r1(avg(os.map((o) => o.promisedMin))),
+    stages: [
+      { key: "preparo", label: "Preparo", min: r1(prep), deltaMin: r1(prep - prepNormal) },
+      { key: "alocacao", label: "Achar entregador", min: r1(assign), deltaMin: r1(assign - 2.5) },
+      { key: "trajeto", label: "Coleta e trajeto", min: r1(travel), deltaMin: r1(travel - travelNormal) },
+    ],
+  };
+}
+
 export function restaurantTrends(op: Operation) {
   return op.history.map((h) => {
     const r = op.restaurants.find((x) => x.id === h.restaurantId)!;
